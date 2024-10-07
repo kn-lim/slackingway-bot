@@ -16,7 +16,6 @@ A personal Slack bot to handle miscellaneous tasks hosted on AWS Lambda.
 ## Packages Used
 
 - [aws-lambda-go](https://github.com/aws/aws-lambda-go/)
-- [aws-sdk-go-v2](https://github.com/aws/aws-sdk-go-v2)
 - [slack-go](https://github.com/slack-go/slack)
 
 # Using the Slack Bot
