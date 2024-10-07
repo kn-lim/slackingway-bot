@@ -71,4 +71,4 @@ From the project home directory:
 7. Give the role the **task** Lambda function is using permission to access the AWS resources it will need.
 8. Change the `Timeout` of the **task** Lambda function to a value greater than 3 seconds.
     - The `Timeout` of the **endpoint** Lambda function can stay as 3 seconds to follow Slack's requirements.
-9. Get the **endpoint** Lambda function's `Function URL` and add it to the Slack apps's `Request URL` in each Slack Slash Command in the [Slack Apps](https://api.slack.com/apps/) page.
+9. Get the **endpoint** Lambda API Gateway triggers's `API endpoint` and add it to the Slack apps's `Request URL` in each Slack Slash Command in the [Slack Apps](https://api.slack.com/apps/) page.
