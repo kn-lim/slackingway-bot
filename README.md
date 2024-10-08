@@ -60,11 +60,6 @@ From the project home directory:
 1. Create an **endpoint** Lambda function on AWS. 
     - For the `Runtime`, select `Amazon Linux 2023`.
     - For the `Architecture`, select `x86_64`.
-    - Under `Advanced Settings`, select:
-        - `Enable function URL`
-          - Auth type: `NONE`
-          - Invoke mode: `BUFFERED (default)`
-          - Enable `Configure cross-origin resource sharing (CORS)`
 2. Add an API Gateway triger to the **endpoint** Lambda function.
     - Use the following settings:
       - **Intent**: Create a new API
