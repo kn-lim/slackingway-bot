@@ -27,6 +27,12 @@ From the project home directory:
 - **Endpoint Function**: `CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags lambda.norpc -o binary/bootstrap ./cmd/endpoint/`
 - **Task Function**: `CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags lambda.norpc -o binary/bootstrap ./cmd/task/`
 
+### Build Environment Variables
+
+| Name | Description |
+| - | - |
+| `AWS_REGION` | AWS Region of the Task Lambda Function |
+
 ## Environment Variables
 
 ### Endpoint Lambda Function
