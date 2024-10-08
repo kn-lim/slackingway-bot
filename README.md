@@ -8,6 +8,7 @@
 
 ![Go](https://img.shields.io/github/go-mod/go-version/kn-lim/slackingway-bot)
 ![GitHub Workflow Status - Build](https://img.shields.io/github/actions/workflow/status/kn-lim/slackingway-bot/build.yaml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/kn-lim/slackingway-bot)](https://goreportcard.com/report/github.com/kn-lim/slackingway-bot)
 ![License](https://img.shields.io/github/license/kn-lim/slackingway-bot)
 
 A personal Slack bot to handle miscellaneous tasks hosted on AWS Lambda.
