@@ -27,7 +27,7 @@ func StartDelayedPing(ctx context.Context, slackRequestBody SlackRequestBody) (e
 	log.Printf("/delayed-ping received")
 
 	// Create a new AWS Lambda client
-	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(os.Getenv("AWS_REGION")))
+	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(os.Getenv("AWS_REGION")))
 	if err != nil {
 		log.Printf("Error loading AWS config: %v", err)
 		return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
