@@ -102,6 +102,8 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		switch slackRequestBody.Command {
 		case "/ping":
 			return slackingway.Ping()
+		case "/delayed-ping":
+			return slackingway.DelayedPing(slackRequestBody.ResponseURL)
 		default:
 			headers := make(map[string]string)
 			headers["Content-Type"] = "text/plain"
