@@ -10,7 +10,7 @@ import (
 
 // Ping responds to a ping request
 func Ping() (events.APIGatewayProxyResponse, error) {
-	log.Printf("Ping request received")
+	log.Printf("/ping received")
 
 	response := slack.Msg{Text: "Pong!"}
 	headers := make(map[string]string)

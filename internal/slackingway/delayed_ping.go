@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -100,6 +101,11 @@ func ReturnDelayedPing(responseURL string) error {
 		return err
 	}
 	defer response.Body.Close()
+
+	// Log the response status and body
+	log.Printf("Response status: %v", response.Status)
+	responseBodyBytes, _ := io.ReadAll(response.Body)
+	log.Printf("Response body: %v", string(responseBodyBytes))
 
 	// Check for non-OK status
 	if response.StatusCode != http.StatusOK {
