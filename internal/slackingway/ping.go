@@ -2,22 +2,25 @@ package slackingway
 
 import (
 	"log"
-	"net/http"
 
-	"github.com/aws/aws-lambda-go/events"
 	"github.com/slack-go/slack"
 )
 
 // Ping responds to a ping request
-func Ping() (events.APIGatewayProxyResponse, error) {
+func Ping(responseURL string) error {
 	log.Printf("/ping received")
 
-	response := slack.Msg{Text: "Pong!"}
-	headers := make(map[string]string)
-	headers["Content-Type"] = "application/json"
-	return events.APIGatewayProxyResponse{
-		Headers:    headers,
-		StatusCode: http.StatusOK,
-		Body:       response.Text,
-	}, nil
+	// Create the response
+	message := slack.Msg{Text: "Pong!"}
+	response, err := NewResponse(responseURL, message)
+	if err != nil {
+		return err
+	}
+
+	// Send the response to Slack
+	if err := SendResponse(response); err != nil {
+		return err
+	}
+
+	return nil
 }

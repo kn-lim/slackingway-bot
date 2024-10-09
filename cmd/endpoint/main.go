@@ -10,8 +10,13 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/kn-lim/slackingway-bot/internal/slackingway"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	lambdaSvc "github.com/aws/aws-sdk-go-v2/service/lambda"
+	"github.com/aws/aws-sdk-go-v2/service/lambda/types"
 	"github.com/slack-go/slack"
+
+	"github.com/kn-lim/slackingway-bot/internal/slackingway"
 )
 
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -98,21 +103,42 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		}, nil
 	// Slash command request
 	case "slash_command":
-		// Process the SlackRequestBody as needed
-		switch slackRequestBody.Command {
-		case "/ping":
-			return slackingway.Ping()
-		case "/delayed-ping":
-			return slackingway.StartDelayedPing(ctx, slackRequestBody)
-		default:
-			headers := make(map[string]string)
-			headers["Content-Type"] = "text/plain"
-			return events.APIGatewayProxyResponse{
-				Headers:    headers,
-				StatusCode: http.StatusOK,
-				Body:       "Unknown command",
-			}, nil
+		// Create a new AWS Lambda client
+		cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(os.Getenv("AWS_REGION")))
+		if err != nil {
+			log.Printf("Error loading AWS config: %v", err)
+			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
 		}
+		client := lambdaSvc.NewFromConfig(cfg)
+
+		// Create the payload for the task function
+		payload, err := json.Marshal(slackRequestBody)
+		if err != nil {
+			log.Printf("Error marshalling payload: %v", err)
+			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+		}
+
+		// Create the input for the task function
+		input := &lambdaSvc.InvokeInput{
+			FunctionName:   aws.String(os.Getenv("TASK_FUNCTION_NAME")),
+			Payload:        payload,
+			InvocationType: types.InvocationTypeEvent,
+		}
+
+		// Invoke the task function
+		if _, err = client.Invoke(ctx, input); err != nil {
+			log.Printf("Error invoking task function: %v", err)
+			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+		}
+
+		// Return an empty response
+		headers := make(map[string]string)
+		headers["Content-Type"] = "application/json"
+		return events.APIGatewayProxyResponse{
+			Headers:    headers,
+			StatusCode: http.StatusOK,
+		}, nil
+	// Unknown request type
 	default:
 		log.Printf("Unknown request type: %s", slackRequestBody.Type)
 		return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil

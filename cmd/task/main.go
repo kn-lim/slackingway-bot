@@ -17,8 +17,10 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 	switch slackRequestBody.Type {
 	case "slash_command":
 		switch slackRequestBody.Command {
+		case "/ping":
+			return slackingway.Ping(slackRequestBody.ResponseURL)
 		case "/delayed-ping":
-			return slackingway.ReturnDelayedPing(slackRequestBody.ResponseURL)
+			return slackingway.DelayedPing(slackRequestBody.ResponseURL)
 		default:
 			log.Printf("Unknown command: %v", slackRequestBody.Command)
 			return errors.New("Unknown command")
