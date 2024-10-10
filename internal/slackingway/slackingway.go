@@ -30,7 +30,8 @@ type Slackingway struct {
 
 func NewSlackingway(s *SlackRequestBody) *Slackingway {
 	return &Slackingway{
-		HTTPClient: &http.Client{},
+		HTTPClient:       &http.Client{},
+		SlackRequestBody: s,
 	}
 }
 
