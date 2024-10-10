@@ -16,7 +16,7 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 	log.Printf("Slack Request Body: %v", slackRequestBody)
 
 	// Initialize Slackingway
-	slackingway := slackingway.NewSlackingway(&slackRequestBody)
+	s := slackingway.NewSlackingway(&slackRequestBody)
 
 	// Parse the request
 	var message slack.Msg
@@ -30,7 +30,7 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 				return err
 			}
 		case "/delayed-ping":
-			message, err = slackingway.DelayedPing()
+			message, err = slackingway.DelayedPing(s)
 			if err != nil {
 				return err
 			}
@@ -44,13 +44,13 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 	}
 
 	// Create the response
-	response, err := slackingway.NewResponse(message)
+	response, err := s.NewResponse(message)
 	if err != nil {
 		return err
 	}
 
 	// Send the response to Slack
-	if err := slackingway.SendResponse(response); err != nil {
+	if err := s.SendResponse(response); err != nil {
 		return err
 	}
 

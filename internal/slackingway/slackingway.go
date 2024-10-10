@@ -23,20 +23,26 @@ type SlackRequestBody struct {
 	TeamID      string `json:"team_id"`
 }
 
-type Slackingway struct {
+type Slackingway interface {
+	// Slack Specific
+	NewResponse(message slack.Msg) (*http.Request, error)
+	SendResponse(request *http.Request) error
+}
+
+type SlackingwayWrapper struct {
 	HTTPClient       *http.Client
 	SlackRequestBody *SlackRequestBody
 }
 
-func NewSlackingway(s *SlackRequestBody) *Slackingway {
-	return &Slackingway{
+func NewSlackingway(s *SlackRequestBody) *SlackingwayWrapper {
+	return &SlackingwayWrapper{
 		HTTPClient:       &http.Client{},
 		SlackRequestBody: s,
 	}
 }
 
 // NewResponse creates a new HTTP request for a Slack response
-func (s *Slackingway) NewResponse(message slack.Msg) (*http.Request, error) {
+func (s *SlackingwayWrapper) NewResponse(message slack.Msg) (*http.Request, error) {
 	// Convert the response to JSON
 	responseBody, err := json.Marshal(message)
 	if err != nil {
@@ -56,7 +62,7 @@ func (s *Slackingway) NewResponse(message slack.Msg) (*http.Request, error) {
 }
 
 // SendResponse sends a response to Slack
-func (s *Slackingway) SendResponse(request *http.Request) error {
+func (s *SlackingwayWrapper) SendResponse(request *http.Request) error {
 	// Create HTTP client and send request
 	response, err := s.HTTPClient.Do(request)
 	if err != nil {

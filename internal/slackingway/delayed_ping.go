@@ -7,12 +7,12 @@ import (
 	"github.com/slack-go/slack"
 )
 
-const (
-	PING_DELAY = 5 * time.Second
+var (
+	PingDelay = 5 * time.Second
 )
 
 // DelayedPing sends a delayed ping response to the user
-func (s *Slackingway) DelayedPing() (slack.Msg, error) {
+func DelayedPing(s Slackingway) (slack.Msg, error) {
 	log.Printf("/delayed-ping received")
 
 	// Create Slack message
@@ -33,7 +33,7 @@ func (s *Slackingway) DelayedPing() (slack.Msg, error) {
 	}
 
 	// Wait for the delay
-	time.Sleep(PING_DELAY)
+	time.Sleep(PingDelay)
 
 	return slack.Msg{
 		Text:            "Delayed Pong!",

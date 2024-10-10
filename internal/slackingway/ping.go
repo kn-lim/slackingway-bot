@@ -7,7 +7,7 @@ import (
 )
 
 // Ping responds to a ping request
-func (s *Slackingway) Ping() (slack.Msg, error) {
+func Ping() (slack.Msg, error) {
 	log.Printf("/ping received")
 
 	return slack.Msg{Text: "Pong!"}, nil
