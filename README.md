@@ -8,6 +8,8 @@
 
 ![Go](https://img.shields.io/github/go-mod/go-version/kn-lim/slackingway-bot)
 ![GitHub Workflow Status - Build](https://img.shields.io/github/actions/workflow/status/kn-lim/slackingway-bot/build.yaml)
+![GitHub Workflow Status - Tests](https://img.shields.io/github/actions/workflow/status/kn-lim/slackingway-bot/test.yaml)
+[![Coverage Status](https://coveralls.io/repos/github/kn-lim/slackingway-bot/badge.svg?branch=main)](https://coveralls.io/github/kn-lim/slackingway-bot?branch=main)
 [![Go Report Card](https://goreportcard.com/badge/github.com/kn-lim/slackingway-bot)](https://goreportcard.com/report/github.com/kn-lim/slackingway-bot)
 ![License](https://img.shields.io/github/license/kn-lim/slackingway-bot)
 
