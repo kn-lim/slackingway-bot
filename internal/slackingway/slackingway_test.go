@@ -13,6 +13,7 @@ import (
 	"github.com/kn-lim/slackingway-bot/internal/slackingway"
 )
 
+// TestNewSlackingway tests the NewSlackingway function
 func TestNewSlackingway(t *testing.T) {
 	body := &slackingway.SlackRequestBody{
 		Type:        "command",
@@ -26,6 +27,7 @@ func TestNewSlackingway(t *testing.T) {
 		TeamID:      "T12345",
 	}
 
+	// Run tests
 	actual := slackingway.NewSlackingway(body)
 
 	assert.NotNil(t, actual)
@@ -33,11 +35,14 @@ func TestNewSlackingway(t *testing.T) {
 	assert.NotNil(t, actual.HTTPClient)
 }
 
+// TestNewResponse tests the NewResponse function
 func TestNewResponse(t *testing.T) {
 	message := slack.Msg{Text: "TestNewResponse"}
 
+	// Create a new SlackingwayWrapper instance
 	s := slackingway.NewSlackingway(&slackingway.SlackRequestBody{})
 
+	// Run tests
 	actual, err := s.NewResponse(message)
 
 	assert.Nil(t, err)
@@ -57,7 +62,9 @@ func TestNewResponse(t *testing.T) {
 	assert.Equal(t, message, actualMessage)
 }
 
+// TestSendResponse tests the SendResponse function
 func TestSendResponse(t *testing.T) {
+	// Create a mock HTTP server
 	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
 	}))

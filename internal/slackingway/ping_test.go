@@ -9,7 +9,9 @@ import (
 	"github.com/kn-lim/slackingway-bot/internal/slackingway"
 )
 
+// TestPing tests the Ping function
 func TestPing(t *testing.T) {
+	// Run test
 	expected := slack.Msg{Text: "Pong!"}
 	actual, err := slackingway.Ping()
 
