@@ -7,20 +7,8 @@ import (
 )
 
 // Ping responds to a ping request
-func Ping(responseURL string) error {
+func (s *Slackingway) Ping() (slack.Msg, error) {
 	log.Printf("/ping received")
 
-	// Create the response
-	message := slack.Msg{Text: "Pong!"}
-	response, err := NewResponse(responseURL, message)
-	if err != nil {
-		return err
-	}
-
-	// Send the response to Slack
-	if err := SendResponse(response); err != nil {
-		return err
-	}
-
-	return nil
+	return slack.Msg{Text: "Pong!"}, nil
 }

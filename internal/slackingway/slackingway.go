@@ -10,8 +10,32 @@ import (
 	"github.com/slack-go/slack"
 )
 
+// Body of request data from Slack
+type SlackRequestBody struct {
+	Type        string `json:"type"`
+	Challenge   string `json:"challenge"`
+	Token       string `json:"token"`
+	Command     string `json:"command"`
+	Text        string `json:"text"`
+	ResponseURL string `json:"response_url"`
+	UserID      string `json:"user_id"`
+	ChannelID   string `json:"channel_id"`
+	TeamID      string `json:"team_id"`
+}
+
+type Slackingway struct {
+	HTTPClient       *http.Client
+	SlackRequestBody *SlackRequestBody
+}
+
+func NewSlackingway(s *SlackRequestBody) *Slackingway {
+	return &Slackingway{
+		HTTPClient: &http.Client{},
+	}
+}
+
 // NewResponse creates a new HTTP request for a Slack response
-func NewResponse(responseURL string, message slack.Msg) (*http.Request, error) {
+func (s *Slackingway) NewResponse(message slack.Msg) (*http.Request, error) {
 	// Convert the response to JSON
 	responseBody, err := json.Marshal(message)
 	if err != nil {
@@ -20,7 +44,7 @@ func NewResponse(responseURL string, message slack.Msg) (*http.Request, error) {
 	}
 
 	// Create the request
-	request, err := http.NewRequest("POST", responseURL, bytes.NewBuffer(responseBody))
+	request, err := http.NewRequest("POST", s.SlackRequestBody.ResponseURL, bytes.NewBuffer(responseBody))
 	if err != nil {
 		log.Printf("Error creating request: %v", err)
 		return nil, err
@@ -31,10 +55,9 @@ func NewResponse(responseURL string, message slack.Msg) (*http.Request, error) {
 }
 
 // SendResponse sends a response to Slack
-func SendResponse(request *http.Request) error {
+func (s *Slackingway) SendResponse(request *http.Request) error {
 	// Create HTTP client and send request
-	client := &http.Client{}
-	response, err := client.Do(request)
+	response, err := s.HTTPClient.Do(request)
 	if err != nil {
 		log.Printf("Error sending request: %v", err)
 		return err

@@ -12,7 +12,7 @@ const (
 )
 
 // DelayedPing sends a delayed ping response to the user
-func DelayedPing(responseURL string) error {
+func (s *Slackingway) DelayedPing() (slack.Msg, error) {
 	log.Printf("/delayed-ping received")
 
 	// Create Slack message
@@ -22,35 +22,21 @@ func DelayedPing(responseURL string) error {
 	}
 
 	// Create the response
-	response, err := NewResponse(responseURL, message)
+	response, err := s.NewResponse(message)
 	if err != nil {
-		return err
+		return slack.Msg{}, err
 	}
 
 	// Send the response to Slack
-	if err := SendResponse(response); err != nil {
-		return err
+	if err := s.SendResponse(response); err != nil {
+		return slack.Msg{}, err
 	}
 
 	// Wait for the delay
 	time.Sleep(PING_DELAY)
 
-	// Create Slack message
-	message = slack.Msg{
+	return slack.Msg{
 		Text:            "Delayed Pong!",
 		ReplaceOriginal: true,
-	}
-
-	// Create the response
-	response, err = NewResponse(responseURL, message)
-	if err != nil {
-		return err
-	}
-
-	// Send the response to Slack
-	if err := SendResponse(response); err != nil {
-		return err
-	}
-
-	return nil
+	}, nil
 }

@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/slack-go/slack"
 
 	"github.com/kn-lim/slackingway-bot/internal/slackingway"
 )
@@ -14,13 +15,25 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 	// Log the request
 	log.Printf("Slack Request Body: %v", slackRequestBody)
 
+	// Initialize Slackingway
+	slackingway := slackingway.NewSlackingway(&slackRequestBody)
+
+	// Parse the request
+	var message slack.Msg
+	var err error
 	switch slackRequestBody.Type {
 	case "slash_command":
 		switch slackRequestBody.Command {
 		case "/ping":
-			return slackingway.Ping(slackRequestBody.ResponseURL)
+			message, err = slackingway.Ping()
+			if err != nil {
+				return err
+			}
 		case "/delayed-ping":
-			return slackingway.DelayedPing(slackRequestBody.ResponseURL)
+			message, err = slackingway.DelayedPing()
+			if err != nil {
+				return err
+			}
 		default:
 			log.Printf("Unknown command: %v", slackRequestBody.Command)
 			return errors.New("Unknown command")
@@ -29,6 +42,19 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 		log.Printf("Unknown request type: %v", slackRequestBody.Type)
 		return errors.New("Unknown request type")
 	}
+
+	// Create the response
+	response, err := slackingway.NewResponse(message)
+	if err != nil {
+		return err
+	}
+
+	// Send the response to Slack
+	if err := slackingway.SendResponse(response); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func main() {
