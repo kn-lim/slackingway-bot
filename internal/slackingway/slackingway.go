@@ -108,7 +108,11 @@ func (s *SlackingwayWrapper) WriteToHistory(userID string, command string) error
 	}
 
 	// Post a message to the History channel
-	msg := fmt.Sprintf("%s executed command `%s` on %s", user.RealName, command, s.SlackRequestBody.Timestamp)
+	full_command := command
+	if s.SlackRequestBody.Text != "" {
+		full_command += " " + s.SlackRequestBody.Text
+	}
+	msg := fmt.Sprintf("%s executed command `%s` on %s", user.RealName, full_command, s.SlackRequestBody.Timestamp)
 	_, _, err = s.APIClient.PostMessage(
 		os.Getenv("SLACK_HISTORY_CHANNEL_ID"),
 		slack.MsgOptionText(msg, false),
