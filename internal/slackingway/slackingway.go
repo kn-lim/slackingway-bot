@@ -94,6 +94,10 @@ func (s *SlackingwayWrapper) SendResponse(request *http.Request) error {
 func (s *SlackingwayWrapper) WriteToHistory(userID string, command string) error {
 	// Get user information
 	user, err := s.APIClient.GetUserInfo(userID)
+	if err != nil {
+		log.Printf("Error getting user info: %v", err)
+		return err
+	}
 
 	// Post a message to the History channel
 	msg := fmt.Sprintf("User %s executed command %s", user.RealName, command)
