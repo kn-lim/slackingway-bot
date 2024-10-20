@@ -87,13 +87,13 @@ From the project home directory:
 
 Get the **endpoint** Lambda API Gateway triggers's `API endpoint` and add it to the Slack apps's `Request URL` in each Slack Slash Command in the Slack API page.
 
-## OAuth & Permissions
+### OAuth & Permissions
 
-### OAuth Tokens
+#### OAuth Tokens
 
 Save the `Bot User OAuth Token` as the `SLACK_OAUTH_TOKEN` environment variable in the Task Lambda function.
 
-### Scopes
+#### Scopes
 
 Enable the following `Bot Token Scopes`:
 
