@@ -9,12 +9,14 @@ import (
 
 	"github.com/slack-go/slack"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 
 	"github.com/kn-lim/slackingway-bot/internal/slackingway"
 )
 
 // TestSlackRequestBody is a test SlackRequestBody for use in tests
 var TestSlackRequestBody = &slackingway.SlackRequestBody{
+	Timestamp:   "1234567890",
 	Type:        "command",
 	Challenge:   "challenge",
 	Token:       "token",
@@ -34,6 +36,7 @@ func TestNewSlackingway(t *testing.T) {
 	assert.NotNil(t, actual)
 	assert.Equal(t, TestSlackRequestBody, actual.SlackRequestBody)
 	assert.NotNil(t, actual.HTTPClient)
+	assert.NotNil(t, actual.APIClient)
 }
 
 // TestNewResponse tests the NewResponse function
@@ -88,13 +91,22 @@ func TestSendResponse(t *testing.T) {
 
 // TestWriteToHistory tests the WriteToHistory function
 func TestWriteToHistory(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
 	// Create an empty SlackingwayWrapper instance
 	s := &slackingway.SlackingwayWrapper{}
 
 	assert.NotNil(t, s.WriteToHistory())
 
-	// Add MockSlackAPIClient to the SlackingwayWrapper
-	s.APIClient = &MockSlackAPIClient{}
+	mockSlackAPIClient := NewMockSlackAPIClient(ctrl)
+	mockSlackAPIClient.EXPECT().GetUserInfo(gomock.Any()).Return(&slack.User{RealName: "DefinitelyA RealName"}, nil)
+	mockSlackAPIClient.EXPECT().PostMessage(gomock.Any(), gomock.Any()).Return("messageID", "timestamp", nil)
+
+	s = &slackingway.SlackingwayWrapper{
+		APIClient:        mockSlackAPIClient,
+		SlackRequestBody: TestSlackRequestBody,
+	}
 
 	assert.Nil(t, s.WriteToHistory())
 }
