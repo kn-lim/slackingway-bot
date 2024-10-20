@@ -58,7 +58,8 @@ From the project home directory:
 
 | Name | Description |
 | - | - |
-| `SLACK_SIGNING_SECRET` | Slack App Signing Secret |
+| `SLACK_HISTORY_CHANNEL_ID` | Slackingway's History Channel ID |
+| `SLACK_OAUTH_TOKEN` | Slack App's OAuth Token |
 
 ## AWS Setup
 

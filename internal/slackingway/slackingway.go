@@ -3,9 +3,11 @@ package slackingway
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/slack-go/slack"
 )
@@ -27,15 +29,18 @@ type Slackingway interface {
 	// Slack Specific
 	NewResponse(message slack.Msg) (*http.Request, error)
 	SendResponse(request *http.Request) error
+	WriteToHistory(userID string, command string) error
 }
 
 type SlackingwayWrapper struct {
+	APIClient        *slack.Client
 	HTTPClient       *http.Client
 	SlackRequestBody *SlackRequestBody
 }
 
 func NewSlackingway(s *SlackRequestBody) *SlackingwayWrapper {
 	return &SlackingwayWrapper{
+		APIClient:        slack.New(os.Getenv("SLACK_OAUTH_TOKEN")),
 		HTTPClient:       &http.Client{},
 		SlackRequestBody: s,
 	}
@@ -79,6 +84,25 @@ func (s *SlackingwayWrapper) SendResponse(request *http.Request) error {
 	// Check for non-OK status
 	if response.StatusCode != http.StatusOK {
 		log.Printf("Non-OK HTTP status: %v", response.StatusCode)
+		return err
+	}
+
+	return nil
+}
+
+// WriteToHistory writes a message to Slackingway's History channel
+func (s *SlackingwayWrapper) WriteToHistory(userID string, command string) error {
+	// Get user information
+	user, err := s.APIClient.GetUserInfo(userID)
+
+	// Post a message to the History channel
+	msg := fmt.Sprintf("User %s executed command %s", user.RealName, command)
+	_, _, err = s.APIClient.PostMessage(
+		os.Getenv("SLACK_HISTORY_CHANNEL_ID"),
+		slack.MsgOptionText(msg, false),
+	)
+	if err != nil {
+		log.Printf("Error posting message: %v", err)
 		return err
 	}
 

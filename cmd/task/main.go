@@ -25,11 +25,15 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 	case "slash_command":
 		switch slackRequestBody.Command {
 		case "/ping":
+			s.WriteToHistory(slackRequestBody.UserID, slackRequestBody.Command)
+
 			message, err = slackingway.Ping()
 			if err != nil {
 				return err
 			}
 		case "/delayed-ping":
+			s.WriteToHistory(slackRequestBody.UserID, slackRequestBody.Command)
+
 			message, err = slackingway.DelayedPing(s)
 			if err != nil {
 				return err
