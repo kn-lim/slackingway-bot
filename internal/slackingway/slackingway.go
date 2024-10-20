@@ -92,6 +92,12 @@ func (s *SlackingwayWrapper) SendResponse(request *http.Request) error {
 
 // WriteToHistory writes a message to Slackingway's History channel
 func (s *SlackingwayWrapper) WriteToHistory(userID string, command string) error {
+	// Check if APIClient is nil
+	if s.APIClient == nil {
+		log.Printf("APIClient is nil")
+		return fmt.Errorf("APIClient is nil")
+	}
+
 	// Get user information
 	user, err := s.APIClient.GetUserInfo(userID)
 	if err != nil {
