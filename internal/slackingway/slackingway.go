@@ -14,6 +14,7 @@ import (
 
 // Body of request data from Slack
 type SlackRequestBody struct {
+	Timestamp   string `json:"timestamp"`
 	Type        string `json:"type"`
 	Challenge   string `json:"challenge"`
 	Token       string `json:"token"`
@@ -38,6 +39,7 @@ type SlackingwayWrapper struct {
 	SlackRequestBody *SlackRequestBody
 }
 
+// NewSlackingway creates a new SlackingwayWrapper
 func NewSlackingway(s *SlackRequestBody) *SlackingwayWrapper {
 	return &SlackingwayWrapper{
 		APIClient:        slack.New(os.Getenv("SLACK_OAUTH_TOKEN")),
@@ -106,7 +108,7 @@ func (s *SlackingwayWrapper) WriteToHistory(userID string, command string) error
 	}
 
 	// Post a message to the History channel
-	msg := fmt.Sprintf("User %s executed command %s", user.RealName, command)
+	msg := fmt.Sprintf("%s executed command %s on %s", user.RealName, command, s.SlackRequestBody.Timestamp)
 	_, _, err = s.APIClient.PostMessage(
 		os.Getenv("SLACK_HISTORY_CHANNEL_ID"),
 		slack.MsgOptionText(msg, false),
