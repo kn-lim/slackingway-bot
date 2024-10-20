@@ -26,15 +26,20 @@ type SlackRequestBody struct {
 	TeamID      string `json:"team_id"`
 }
 
+type SlackAPIClient interface {
+	GetUserInfo(userID string) (*slack.User, error)
+	PostMessage(channelID string, options ...slack.MsgOption) (string, string, error)
+}
+
 type Slackingway interface {
 	// Slack Specific
 	NewResponse(message slack.Msg) (*http.Request, error)
 	SendResponse(request *http.Request) error
-	WriteToHistory(userID string, command string) error
+	WriteToHistory() error
 }
 
 type SlackingwayWrapper struct {
-	APIClient        *slack.Client
+	APIClient        SlackAPIClient
 	HTTPClient       *http.Client
 	SlackRequestBody *SlackRequestBody
 }
@@ -93,7 +98,7 @@ func (s *SlackingwayWrapper) SendResponse(request *http.Request) error {
 }
 
 // WriteToHistory writes a message to Slackingway's History channel
-func (s *SlackingwayWrapper) WriteToHistory(userID string, command string) error {
+func (s *SlackingwayWrapper) WriteToHistory() error {
 	// Check if APIClient is nil
 	if s.APIClient == nil {
 		log.Printf("APIClient is nil")
@@ -101,14 +106,14 @@ func (s *SlackingwayWrapper) WriteToHistory(userID string, command string) error
 	}
 
 	// Get user information
-	user, err := s.APIClient.GetUserInfo(userID)
+	user, err := s.APIClient.GetUserInfo(s.SlackRequestBody.UserID)
 	if err != nil {
 		log.Printf("Error getting user info: %v", err)
 		return err
 	}
 
 	// Post a message to the History channel
-	full_command := command
+	full_command := s.SlackRequestBody.Command
 	if s.SlackRequestBody.Text != "" {
 		full_command += " " + s.SlackRequestBody.Text
 	}

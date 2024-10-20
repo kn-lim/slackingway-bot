@@ -17,6 +17,65 @@ import (
 	gomock "go.uber.org/mock/gomock"
 )
 
+// MockSlackAPIClient is a mock of SlackAPIClient interface.
+type MockSlackAPIClient struct {
+	ctrl     *gomock.Controller
+	recorder *MockSlackAPIClientMockRecorder
+}
+
+// MockSlackAPIClientMockRecorder is the mock recorder for MockSlackAPIClient.
+type MockSlackAPIClientMockRecorder struct {
+	mock *MockSlackAPIClient
+}
+
+// NewMockSlackAPIClient creates a new mock instance.
+func NewMockSlackAPIClient(ctrl *gomock.Controller) *MockSlackAPIClient {
+	mock := &MockSlackAPIClient{ctrl: ctrl}
+	mock.recorder = &MockSlackAPIClientMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockSlackAPIClient) EXPECT() *MockSlackAPIClientMockRecorder {
+	return m.recorder
+}
+
+// GetUserInfo mocks base method.
+func (m *MockSlackAPIClient) GetUserInfo(userID string) (*slack.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserInfo", userID)
+	ret0, _ := ret[0].(*slack.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserInfo indicates an expected call of GetUserInfo.
+func (mr *MockSlackAPIClientMockRecorder) GetUserInfo(userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserInfo", reflect.TypeOf((*MockSlackAPIClient)(nil).GetUserInfo), userID)
+}
+
+// PostMessage mocks base method.
+func (m *MockSlackAPIClient) PostMessage(channelID string, options ...slack.MsgOption) (string, string, error) {
+	m.ctrl.T.Helper()
+	varargs := []any{channelID}
+	for _, a := range options {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "PostMessage", varargs...)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(string)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// PostMessage indicates an expected call of PostMessage.
+func (mr *MockSlackAPIClientMockRecorder) PostMessage(channelID any, options ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{channelID}, options...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostMessage", reflect.TypeOf((*MockSlackAPIClient)(nil).PostMessage), varargs...)
+}
+
 // MockSlackingway is a mock of Slackingway interface.
 type MockSlackingway struct {
 	ctrl     *gomock.Controller
@@ -70,15 +129,15 @@ func (mr *MockSlackingwayMockRecorder) SendResponse(request any) *gomock.Call {
 }
 
 // WriteToHistory mocks base method.
-func (m *MockSlackingway) WriteToHistory(userID, command string) error {
+func (m *MockSlackingway) WriteToHistory() error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "WriteToHistory", userID, command)
+	ret := m.ctrl.Call(m, "WriteToHistory")
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // WriteToHistory indicates an expected call of WriteToHistory.
-func (mr *MockSlackingwayMockRecorder) WriteToHistory(userID, command any) *gomock.Call {
+func (mr *MockSlackingwayMockRecorder) WriteToHistory() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WriteToHistory", reflect.TypeOf((*MockSlackingway)(nil).WriteToHistory), userID, command)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WriteToHistory", reflect.TypeOf((*MockSlackingway)(nil).WriteToHistory))
 }
