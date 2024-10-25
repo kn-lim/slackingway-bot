@@ -4,11 +4,13 @@ on:
       - '**.md'
       - '.gitignore'
       - 'LICENSE'
+      - 'terraform/**'
   pull_request:
     paths-ignore:
       - '**.md'
       - '.gitignore'
       - 'LICENSE'
+      - 'terraform/**'
 
 name: Run Tests
 
