@@ -4,8 +4,24 @@ variable "region" {
   default     = "us-west-2"
 }
 
+variable "account_id" {
+  description = "The AWS account ID"
+  type        = string
+}
+
 variable "slack_signing_secret" {
   description = "Slack app signing secret"
+  type        = string
+  sensitive   = true
+}
+
+variable "slack_history_channel_id" {
+  description = "Slack channel ID for history"
+  type        = string
+}
+
+variable "slack_oauth_token" {
+  description = "Slack app OAuth token"
   type        = string
   sensitive   = true
 }
@@ -38,4 +54,12 @@ variable "retention_in_days" {
   description = "The number of days to retain logs in CloudWatch"
   type        = number
   default     = 3
+}
+
+variable "tags" {
+  description = "A map of tags to apply to the resources"
+  type        = map(string)
+  default = [{
+    App = "slackingway-bot"
+  }]
 }
