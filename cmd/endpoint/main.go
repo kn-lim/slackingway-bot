@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
+	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -46,6 +48,15 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	case "application/x-www-form-urlencoded":
 		// log.Printf("Found application/x-www-form-urlencoded request")
 
+		// Get Time Stamp
+		timestamp, err := strconv.ParseInt(request.Headers["X-Slack-Request-Timestamp"], 10, 64)
+		if err != nil {
+			log.Printf("Error parsing timestamp: %v", err)
+			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+		}
+		slackRequestBody.Timestamp = time.Unix(timestamp, 0).UTC().Format(time.RFC822)
+
+		// Parse the form data
 		formData, err := url.ParseQuery(request.Body)
 		if err != nil {
 			log.Printf("Error parsing request body: %v", err)

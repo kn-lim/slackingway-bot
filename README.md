@@ -58,7 +58,8 @@ From the project home directory:
 
 | Name | Description |
 | - | - |
-| `SLACK_SIGNING_SECRET` | Slack App Signing Secret |
+| `SLACK_HISTORY_CHANNEL_ID` | Slackingway's History Channel ID |
+| `SLACK_OAUTH_TOKEN` | Slack App's OAuth Token |
 
 ## AWS Setup
 
@@ -79,4 +80,27 @@ From the project home directory:
 7. Give the role the **task** Lambda function is using permission to access the AWS resources it will need.
 8. Change the `Timeout` of the **task** Lambda function to a value greater than 3 seconds.
     - The `Timeout` of the **endpoint** Lambda function can stay as 3 seconds to follow Slack's requirements.
-9. Get the **endpoint** Lambda API Gateway triggers's `API endpoint` and add it to the Slack apps's `Request URL` in each Slack Slash Command in the [Slack Apps](https://api.slack.com/apps/) page.
+
+## Slack Setup
+
+### Slash Commands
+
+Get the **endpoint** Lambda API Gateway triggers's `API endpoint` and add it to the Slack apps's `Request URL` in each Slack Slash Command in the Slack API page.
+
+### OAuth & Permissions
+
+#### OAuth Tokens
+
+Save the `Bot User OAuth Token` as the `SLACK_OAUTH_TOKEN` environment variable in the Task Lambda function.
+
+#### Scopes
+
+Enable the following `Bot Token Scopes`:
+
+- `channels:history`
+- `chat:write`
+- `chat:write.customize`
+- `commands`
+- `im:history`
+- `users.profile:read`
+- `users:read`

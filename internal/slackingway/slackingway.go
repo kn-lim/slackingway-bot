@@ -3,15 +3,18 @@ package slackingway
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/slack-go/slack"
 )
 
 // Body of request data from Slack
 type SlackRequestBody struct {
+	Timestamp   string `json:"timestamp"`
 	Type        string `json:"type"`
 	Challenge   string `json:"challenge"`
 	Token       string `json:"token"`
@@ -23,19 +26,28 @@ type SlackRequestBody struct {
 	TeamID      string `json:"team_id"`
 }
 
+type SlackAPIClient interface {
+	GetUserInfo(userID string) (*slack.User, error)
+	PostMessage(channelID string, options ...slack.MsgOption) (string, string, error)
+}
+
 type Slackingway interface {
 	// Slack Specific
 	NewResponse(message slack.Msg) (*http.Request, error)
 	SendResponse(request *http.Request) error
+	WriteToHistory() error
 }
 
 type SlackingwayWrapper struct {
+	APIClient        SlackAPIClient
 	HTTPClient       *http.Client
 	SlackRequestBody *SlackRequestBody
 }
 
+// NewSlackingway creates a new SlackingwayWrapper
 func NewSlackingway(s *SlackRequestBody) *SlackingwayWrapper {
 	return &SlackingwayWrapper{
+		APIClient:        slack.New(os.Getenv("SLACK_OAUTH_TOKEN")),
 		HTTPClient:       &http.Client{},
 		SlackRequestBody: s,
 	}
@@ -79,6 +91,39 @@ func (s *SlackingwayWrapper) SendResponse(request *http.Request) error {
 	// Check for non-OK status
 	if response.StatusCode != http.StatusOK {
 		log.Printf("Non-OK HTTP status: %v", response.StatusCode)
+		return err
+	}
+
+	return nil
+}
+
+// WriteToHistory writes a message to Slackingway's History channel
+func (s *SlackingwayWrapper) WriteToHistory() error {
+	// Check if APIClient is nil
+	if s.APIClient == nil {
+		log.Printf("APIClient is nil")
+		return fmt.Errorf("APIClient is nil")
+	}
+
+	// Get user information
+	user, err := s.APIClient.GetUserInfo(s.SlackRequestBody.UserID)
+	if err != nil {
+		log.Printf("Error getting user info: %v", err)
+		return err
+	}
+
+	// Post a message to the History channel
+	full_command := s.SlackRequestBody.Command
+	if s.SlackRequestBody.Text != "" {
+		full_command += " " + s.SlackRequestBody.Text
+	}
+	msg := fmt.Sprintf("%s executed command `%s` on %s", user.RealName, full_command, s.SlackRequestBody.Timestamp)
+	_, _, err = s.APIClient.PostMessage(
+		os.Getenv("SLACK_HISTORY_CHANNEL_ID"),
+		slack.MsgOptionText(msg, false),
+	)
+	if err != nil {
+		log.Printf("Error posting message: %v", err)
 		return err
 	}
 

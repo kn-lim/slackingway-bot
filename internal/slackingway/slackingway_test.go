@@ -9,30 +9,34 @@ import (
 
 	"github.com/slack-go/slack"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 
 	"github.com/kn-lim/slackingway-bot/internal/slackingway"
 )
 
+// TestSlackRequestBody is a test SlackRequestBody for use in tests
+var TestSlackRequestBody = &slackingway.SlackRequestBody{
+	Timestamp:   "1234567890",
+	Type:        "command",
+	Challenge:   "challenge",
+	Token:       "token",
+	Command:     "/test-command",
+	Text:        "testing123!",
+	ResponseURL: "http://definitely-a-real-url.com/response",
+	UserID:      "U12345",
+	ChannelID:   "C12345",
+	TeamID:      "T12345",
+}
+
 // TestNewSlackingway tests the NewSlackingway function
 func TestNewSlackingway(t *testing.T) {
-	body := &slackingway.SlackRequestBody{
-		Type:        "command",
-		Challenge:   "challenge",
-		Token:       "token",
-		Command:     "/test-command",
-		Text:        "testing123!",
-		ResponseURL: "http://definitely-a-real-url.com/response",
-		UserID:      "U12345",
-		ChannelID:   "C12345",
-		TeamID:      "T12345",
-	}
-
 	// Run tests
-	actual := slackingway.NewSlackingway(body)
+	actual := slackingway.NewSlackingway(TestSlackRequestBody)
 
 	assert.NotNil(t, actual)
-	assert.Equal(t, body, actual.SlackRequestBody)
+	assert.Equal(t, TestSlackRequestBody, actual.SlackRequestBody)
 	assert.NotNil(t, actual.HTTPClient)
+	assert.NotNil(t, actual.APIClient)
 }
 
 // TestNewResponse tests the NewResponse function
@@ -51,7 +55,7 @@ func TestNewResponse(t *testing.T) {
 
 	// Read the body from the actual request and compare it to the expected message
 	var actualMessage slack.Msg
-	bodyBytes, err := io.ReadAll(actual.Body) // Read the request body
+	bodyBytes, err := io.ReadAll(actual.Body)
 	assert.Nil(t, err)
 
 	// Unmarshal the body into a slack.Msg object
@@ -83,4 +87,26 @@ func TestSendResponse(t *testing.T) {
 	err = s.SendResponse(req)
 
 	assert.Nil(t, err)
+}
+
+// TestWriteToHistory tests the WriteToHistory function
+func TestWriteToHistory(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	// Create an empty SlackingwayWrapper instance
+	s := &slackingway.SlackingwayWrapper{}
+
+	assert.NotNil(t, s.WriteToHistory())
+
+	mockSlackAPIClient := NewMockSlackAPIClient(ctrl)
+	mockSlackAPIClient.EXPECT().GetUserInfo(gomock.Any()).Return(&slack.User{RealName: "DefinitelyA RealName"}, nil)
+	mockSlackAPIClient.EXPECT().PostMessage(gomock.Any(), gomock.Any()).Return("messageID", "timestamp", nil)
+
+	s = &slackingway.SlackingwayWrapper{
+		APIClient:        mockSlackAPIClient,
+		SlackRequestBody: TestSlackRequestBody,
+	}
+
+	assert.Nil(t, s.WriteToHistory())
 }
