@@ -21,3 +21,4 @@ jobs:
         output-format: markdown table
         output-method: inject
         git-push: "true"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
