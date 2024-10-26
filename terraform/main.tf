@@ -137,7 +137,7 @@ resource "aws_iam_role_policy_attachment" "lambda_logs_task" {
 # API Gateway
 
 resource "aws_api_gateway_rest_api" "this" {
-  name        = var.function_name
+  name        = "${var.function_name}-endpoint"
   description = "API Gateway for ${var.function_name}-endpoint"
   tags        = var.tags
 }
@@ -151,7 +151,7 @@ resource "aws_api_gateway_resource" "this" {
 resource "aws_api_gateway_method" "this" {
   rest_api_id   = aws_api_gateway_rest_api.this.id
   resource_id   = aws_api_gateway_resource.this.id
-  http_method   = "GET"
+  http_method   = "ANY"
   authorization = "NONE"
 }
 
