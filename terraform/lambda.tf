@@ -15,7 +15,7 @@ resource "aws_lambda_function" "endpoint" {
 
   logging_config {
     log_group  = aws_cloudwatch_log_group.endpoint.name
-    log_format = "json"
+    log_format = "JSON"
   }
 
   tags = var.tags
@@ -40,7 +40,7 @@ resource "aws_lambda_function" "task" {
 
   logging_config {
     log_group  = aws_cloudwatch_log_group.task.name
-    log_format = "json"
+    log_format = "JSON"
   }
 
   tags = var.tags
