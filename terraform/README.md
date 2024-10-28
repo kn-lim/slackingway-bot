@@ -54,7 +54,7 @@ No modules.
 | <a name="input_slack_history_channel_id"></a> [slack\_history\_channel\_id](#input\_slack\_history\_channel\_id) | Slack channel ID for history | `string` | n/a | yes |
 | <a name="input_slack_oauth_token"></a> [slack\_oauth\_token](#input\_slack\_oauth\_token) | Slack app OAuth token | `string` | n/a | yes |
 | <a name="input_slack_signing_secret"></a> [slack\_signing\_secret](#input\_slack\_signing\_secret) | Slack app signing secret | `string` | n/a | yes |
-| <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to apply to the resources | `map(string)` | <pre>[<br/>  {<br/>    "App": "slackingway-bot"<br/>  }<br/>]</pre> | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to apply to the resources | `map(string)` | <pre>{<br/>  "App": "slackingway-bot"<br/>}</pre> | no |
 | <a name="input_task_timeout"></a> [task\_timeout](#input\_task\_timeout) | The timeout for the task Lambda function | `number` | `300` | no |
 
 ## Outputs
