@@ -1,4 +1,5 @@
 resource "aws_lambda_function" "endpoint" {
+  filename = ""
   function_name = "${var.function_name}-endpoint"
   role          = aws_iam_role.endpoint.arn
 
@@ -23,6 +24,7 @@ resource "aws_lambda_function" "endpoint" {
 }
 
 resource "aws_lambda_function" "task" {
+  filename = ""
   function_name = "${var.function_name}-task"
   role          = aws_iam_role.task.arn
 
