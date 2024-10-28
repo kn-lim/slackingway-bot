@@ -59,7 +59,7 @@ variable "retention_in_days" {
 variable "tags" {
   description = "A map of tags to apply to the resources"
   type        = map(string)
-  default = [{
+  default = {
     App = "slackingway-bot"
-  }]
+  }
 }

@@ -4,7 +4,8 @@ module "slackingway-bot" {
   # Required
 
   account_id = ""
-  slack_history_channel = ""
+  slack_signing_secret = ""
+  slack_history_channel_id = ""
   slack_oauth_token = ""
 
   # Optional
