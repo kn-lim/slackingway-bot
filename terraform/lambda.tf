@@ -2,7 +2,6 @@ resource "aws_lambda_function" "endpoint" {
   filename = ""
   function_name = "${var.function_name}-endpoint"
   role          = aws_iam_role.endpoint.arn
-
   runtime = var.runtime
   timeout = var.endpoint_timeout
 
@@ -27,7 +26,7 @@ resource "aws_lambda_function" "task" {
   filename = ""
   function_name = "${var.function_name}-task"
   role          = aws_iam_role.task.arn
-
+  handler = ""
   runtime = var.runtime
   timeout = var.task_timeout
 
