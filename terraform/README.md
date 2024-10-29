@@ -2,7 +2,7 @@
 
 To use this module, use the following as the source: `github.com/kn-lim/slackingway-bot//terraform`
 
-Make sure to build the `endpoint` and `task` binaries in order for Terraform to create the resources. 
+Make sure to build the `endpoint` and `task` binaries in order for Terraform to create the resources. This will need to be done only when first creating the module.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
