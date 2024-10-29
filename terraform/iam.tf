@@ -35,7 +35,7 @@ resource "aws_iam_role_policy" "invoke" {
       {
         Effect   = "Allow",
         Action   = "lambda:InvokeFunction",
-        Resource = aws_lambda_function.endpoint.arn,
+        Resource = aws_lambda_function.task.arn,
       },
     ],
   })
