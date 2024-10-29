@@ -63,6 +63,8 @@ From the project home directory:
 
 ## AWS Setup
 
+To quickly spin up **slackingway-bot** on AWS, use the [Terraform module](https://github.com/kn-lim/slackingway-bot/tree/main/terraform).
+
 1. Create an **endpoint** Lambda function on AWS. 
     - For the `Runtime`, select `Amazon Linux 2023`.
     - For the `Architecture`, select `x86_64`.
