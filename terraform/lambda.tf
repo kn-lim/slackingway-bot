@@ -1,5 +1,5 @@
 resource "aws_lambda_function" "endpoint" {
-  filename = "bootstrap.zip" # Not used
+  filename = var.endpoint_filename
   function_name = "${var.function_name}-endpoint"
   role          = aws_iam_role.endpoint.arn
   handler = "hello.handler" # Not used
@@ -24,7 +24,7 @@ resource "aws_lambda_function" "endpoint" {
 }
 
 resource "aws_lambda_function" "task" {
-  filename = "bootstrap.zip" # Not used
+  filename = var.task_filename
   function_name = "${var.function_name}-task"
   role          = aws_iam_role.task.arn
   handler = "hello.handler" # Not used

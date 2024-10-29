@@ -8,6 +8,9 @@ module "slackingway-bot" {
   slack_history_channel_id = ""
   slack_oauth_token = ""
 
+  endpoint_filename = "endpoint.zip"
+  task_filename = "task.zip"
+
   # Optional
 
   # endpoint_timeout = 3

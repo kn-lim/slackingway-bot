@@ -26,6 +26,16 @@ variable "slack_oauth_token" {
   sensitive   = true
 }
 
+variable "endpoint_filename" {
+  description = "The filename of the endpoint Lambda function"
+  type        = string
+}
+
+variable "task_filename" {
+  description = "The filename of the task Lambda function"
+  type        = string
+}
+
 variable "function_name" {
   description = "The name of the Lambda function"
   type        = string
