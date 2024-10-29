@@ -1,21 +1,24 @@
 on:
   push:
+    branches:
+      - main
     paths-ignore:
       - '**.md'
       - '.gitignore'
       - 'LICENSE'
+      - 'terraform/**'
   pull_request:
     paths-ignore:
       - '**.md'
       - '.gitignore'
       - 'LICENSE'
+      - 'terraform/**'
 
 name: Run Tests
 
 jobs:
   tests:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
 
