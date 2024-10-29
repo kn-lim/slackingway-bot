@@ -27,7 +27,7 @@ resource "aws_iam_role" "task" {
 
 resource "aws_iam_role_policy" "invoke" {
   name = "InvokeEndpointLambdaFunction"
-  role = aws_iam_role.task.name
+  role = aws_iam_role.endpoint.name
 
   policy = jsonencode({
     Version = "2012-10-17",
