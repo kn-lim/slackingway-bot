@@ -33,11 +33,11 @@ resource "aws_iam_role_policy" "invoke" {
     Version = "2012-10-17",
     Statement = [
       {
-        Effect   = "Allow",
-        Action   = [
+        Effect = "Allow",
+        Action = [
           "lambda:InvokeFunction"
         ],
-        Resource = [ 
+        Resource = [
           aws_lambda_function.task.arn
         ]
       },
