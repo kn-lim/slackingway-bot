@@ -5,45 +5,56 @@ To use this module, use the following as the source: `github.com/kn-lim/slacking
 Make sure to build the `endpoint` and `task` binaries in order for Terraform to create the resources. This will need to be done only when first creating the module.
 
 <!-- BEGIN_TF_DOCS -->
-## Requirements
 
-| Name | Version |
-|------|---------|
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.0 |
 
-## Providers
+## Example
 
-| Name | Version |
-|------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.0 |
+```hcl
+locals {
+  name                     = "slackingway-bot"
+  account_id               = ""
+  slack_signing_secret     = ""
+  slack_history_channel_id = ""
+  slack_oauth_token        = ""
 
-## Modules
+  # These non-empty .zip files are needed only when creating resources
+  # Can be deleted/moved afterwards
+  endpoint_filename = "endpoint.zip"
+  task_filename     = "task.zip"
+}
 
-No modules.
+module "slackingway-bot" {
+  # https://github.com/kn-lim/slackingway-bot/tree/main/terraform
+  source = "github.com/kn-lim/slackingway-bot//terraform"
 
-## Resources
+  # Required
 
-| Name | Type |
-|------|------|
-| [aws_api_gateway_deployment.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_deployment) | resource |
-| [aws_api_gateway_integration.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_integration) | resource |
-| [aws_api_gateway_method.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_method) | resource |
-| [aws_api_gateway_resource.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_resource) | resource |
-| [aws_api_gateway_rest_api.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_rest_api) | resource |
-| [aws_api_gateway_stage.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_stage) | resource |
-| [aws_cloudwatch_log_group.endpoint](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
-| [aws_cloudwatch_log_group.task](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
-| [aws_iam_policy.lambda_logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
-| [aws_iam_role.endpoint](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
-| [aws_iam_role.task](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
-| [aws_iam_role_policy.invoke](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
-| [aws_iam_role_policy_attachment.lambda_logs_endpoint](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_iam_role_policy_attachment.lambda_logs_task](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_lambda_function.endpoint](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) | resource |
-| [aws_lambda_function.task](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) | resource |
-| [aws_lambda_permission.api_gateway](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
-| [aws_iam_policy_document.assume_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_iam_policy_document.lambda_logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+  account_id               = local.account_id
+  endpoint_filename        = local.endpoint_filename
+  slack_signing_secret     = local.slack_signing_secret
+  slack_history_channel_id = local.slack_history_channel_id
+  slack_oauth_token        = local.slack_oauth_token
+  task_filename            = local.task_filename
+
+  # Optional
+
+  # endpoint_timeout = 3
+  # function_name = local.name
+  # log_format = "Text
+  # region = "us-west-2"
+  # retention_in_days = 3
+  # runtime = "provided.al2023"
+  # tags = {
+  #   App = local.name
+  # }
+  # task_timeout = 3
+}
+
+output "api_endpoint" {
+  description = "The endpoint for the API Gateway"
+  value       = module.slackingway-bot.api_endpoint
+}
+```
 
 ## Inputs
 
@@ -68,5 +79,5 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_api_endpoint"></a> [api\_endpoint](#output\_api\_endpoint) | The endpoint for the API Gateway |
+| <a name="output_api_endpoint"></a> [api\_endpoint](#output\_api\_endpoint) | The endpoint for the API Gateway |  
 <!-- END_TF_DOCS -->
