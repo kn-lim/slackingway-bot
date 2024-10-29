@@ -37,7 +37,7 @@ module "slackingway-bot" {
   # Optional
 
   # endpoint_timeout = 3
-  # function_name = local.name
+  # name = local.name
   # log_format = "Text
   # region = "us-west-2"
   # retention_in_days = 3
@@ -97,8 +97,8 @@ output "api_endpoint" {
 | <a name="input_account_id"></a> [account\_id](#input\_account\_id) | The AWS account ID | `string` | n/a | yes |
 | <a name="input_endpoint_filename"></a> [endpoint\_filename](#input\_endpoint\_filename) | The filename of the endpoint Lambda function | `string` | n/a | yes |
 | <a name="input_endpoint_timeout"></a> [endpoint\_timeout](#input\_endpoint\_timeout) | The timeout for the endpoint Lambda function | `number` | `3` | no |
-| <a name="input_function_name"></a> [function\_name](#input\_function\_name) | The name of the Lambda function | `string` | `"slackingway-bot"` | no |
 | <a name="input_log_format"></a> [log\_format](#input\_log\_format) | The log format for the CloudWatch logs | `string` | `"Text"` | no |
+| <a name="input_name"></a> [name](#input\_name) | The name of the resources | `string` | `"slackingway-bot"` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region in which the resources will be created | `string` | `"us-west-2"` | no |
 | <a name="input_retention_in_days"></a> [retention\_in\_days](#input\_retention\_in\_days) | The number of days to retain logs in CloudWatch | `number` | `3` | no |
 | <a name="input_runtime"></a> [runtime](#input\_runtime) | The runtime for the Lambda functions | `string` | `"provided.al2023"` | no |
