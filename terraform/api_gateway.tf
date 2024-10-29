@@ -1,5 +1,5 @@
 resource "aws_api_gateway_rest_api" "this" {
-  name        = "${var.function_name}-endpoint"
+  name        = "${var.function_name}-endpoint-API"
   description = "API Gateway for ${var.function_name}-endpoint"
   tags        = var.tags
 }
