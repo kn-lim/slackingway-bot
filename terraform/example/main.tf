@@ -27,7 +27,7 @@ module "slackingway-bot" {
   # Optional
 
   # endpoint_timeout = 3
-  # function_name = local.name
+  # name = local.name
   # log_format = "Text
   # region = "us-west-2"
   # retention_in_days = 3

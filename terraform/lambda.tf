@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "endpoint" {
   filename      = var.endpoint_filename
-  function_name = "${var.function_name}-endpoint"
+  function_name = "${var.name}-endpoint"
   role          = aws_iam_role.endpoint.arn
   handler       = "hello.handler" # Not used
   runtime       = var.runtime
@@ -8,7 +8,7 @@ resource "aws_lambda_function" "endpoint" {
 
   environment {
     variables = {
-      TASK_FUNCTION_NAME   = "${var.function_name}-task"
+      TASK_FUNCTION_NAME   = "${var.name}-task"
       SLACK_SIGNING_SECRET = var.slack_signing_secret
     }
   }
@@ -25,7 +25,7 @@ resource "aws_lambda_function" "endpoint" {
 
 resource "aws_lambda_function" "task" {
   filename      = var.task_filename
-  function_name = "${var.function_name}-task"
+  function_name = "${var.name}-task"
   role          = aws_iam_role.task.arn
   handler       = "hello.handler" # Not used
   runtime       = var.runtime

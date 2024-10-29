@@ -14,19 +14,19 @@ data "aws_iam_policy_document" "assume_role" {
 }
 
 resource "aws_iam_role" "endpoint" {
-  name               = "${var.function_name}-endpoint"
+  name               = "${var.name}-endpoint"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
   tags               = var.tags
 }
 
 resource "aws_iam_role" "task" {
-  name               = "${var.function_name}-task"
+  name               = "${var.name}-task"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
   tags               = var.tags
 }
 
 resource "aws_iam_role_policy" "invoke" {
-  name = "InvokeEndpointLambdaFunction"
+  name = "InvokeTaskLambdaFunction"
   role = aws_iam_role.endpoint.name
 
   policy = jsonencode({

@@ -36,8 +36,8 @@ variable "task_filename" {
   type        = string
 }
 
-variable "function_name" {
-  description = "The name of the Lambda function"
+variable "name" {
+  description = "The name of the resources"
   type        = string
   default     = "slackingway-bot"
 }
