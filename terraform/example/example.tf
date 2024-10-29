@@ -4,11 +4,15 @@ locals {
   slack_signing_secret     = ""
   slack_history_channel_id = ""
   slack_oauth_token        = ""
-  endpoint_filename        = "endpoint.zip"
-  task_filename            = "task.zip"
+
+  # These non-empty .zip files are needed only when creating resources
+  # Can be deleted/moved afterwards
+  endpoint_filename = "endpoint.zip"
+  task_filename     = "task.zip"
 }
 
 module "slackingway-bot" {
+  # https://github.com/kn-lim/slackingway-bot/tree/main/terraform
   source = "github.com/kn-lim/slackingway-bot//terraform"
 
   # Required
