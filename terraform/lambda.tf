@@ -1,10 +1,10 @@
 resource "aws_lambda_function" "endpoint" {
-  filename = var.endpoint_filename
+  filename      = var.endpoint_filename
   function_name = "${var.function_name}-endpoint"
   role          = aws_iam_role.endpoint.arn
-  handler = "hello.handler" # Not used
-  runtime = var.runtime
-  timeout = var.endpoint_timeout
+  handler       = "hello.handler" # Not used
+  runtime       = var.runtime
+  timeout       = var.endpoint_timeout
 
   environment {
     variables = {
@@ -24,12 +24,12 @@ resource "aws_lambda_function" "endpoint" {
 }
 
 resource "aws_lambda_function" "task" {
-  filename = var.task_filename
+  filename      = var.task_filename
   function_name = "${var.function_name}-task"
   role          = aws_iam_role.task.arn
-  handler = "hello.handler" # Not used
-  runtime = var.runtime
-  timeout = var.task_timeout
+  handler       = "hello.handler" # Not used
+  runtime       = var.runtime
+  timeout       = var.task_timeout
 
   environment {
     variables = {
