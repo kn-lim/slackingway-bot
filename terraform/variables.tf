@@ -60,6 +60,12 @@ variable "task_timeout" {
   default     = 300
 }
 
+variable "log_format" {
+  description = "The log format for the CloudWatch logs"
+  type        = string
+  default     = "Text"
+}
+
 variable "retention_in_days" {
   description = "The number of days to retain logs in CloudWatch"
   type        = number
