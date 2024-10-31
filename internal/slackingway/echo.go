@@ -2,6 +2,19 @@ package slackingway
 
 import "github.com/slack-go/slack"
 
+func Echo(s *SlackingwayWrapper) error {
+	// Generate a new modal
+	modal := GenerateEchoModal()
+
+	// Open a new modal
+	_, err := s.APIClient.OpenView(s.SlackRequestBody.TriggerID, modal)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func GenerateEchoModal() slack.ModalViewRequest {
 	// Create a new Slack ModalViewRequest
 	titleText := slack.NewTextBlockObject("plain_text", "Echo", false, false)
@@ -54,17 +67,4 @@ func UpdateEchoModal() slack.ModalViewRequest {
 		Blocks:     blocks,
 		CallbackID: "echo",
 	}
-}
-
-func Echo(s *SlackingwayWrapper) error {
-	// Generate a new modal
-	modal := GenerateEchoModal()
-
-	// Open a new modal
-	_, err := s.APIClient.OpenView(s.SlackRequestBody.TriggerID, modal)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
