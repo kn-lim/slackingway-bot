@@ -56,7 +56,7 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 		}
 	case "view_submission":
 		// Update the modal
-		updatedModal := slack.ModalViewRequest{}
+		var updatedModal slack.ModalViewRequest
 		switch slackRequestBody.CallbackID {
 		case "echo":
 			updatedModal = slackingway.UpdateEchoModal()
