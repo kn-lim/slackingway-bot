@@ -55,6 +55,21 @@ func (mr *MockSlackAPIClientMockRecorder) GetUserInfo(userID any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserInfo", reflect.TypeOf((*MockSlackAPIClient)(nil).GetUserInfo), userID)
 }
 
+// OpenView mocks base method.
+func (m *MockSlackAPIClient) OpenView(triggerID string, view slack.ModalViewRequest) (*slack.ViewResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OpenView", triggerID, view)
+	ret0, _ := ret[0].(*slack.ViewResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// OpenView indicates an expected call of OpenView.
+func (mr *MockSlackAPIClientMockRecorder) OpenView(triggerID, view any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OpenView", reflect.TypeOf((*MockSlackAPIClient)(nil).OpenView), triggerID, view)
+}
+
 // PostMessage mocks base method.
 func (m *MockSlackAPIClient) PostMessage(channelID string, options ...slack.MsgOption) (string, string, error) {
 	m.ctrl.T.Helper()
@@ -74,6 +89,21 @@ func (mr *MockSlackAPIClientMockRecorder) PostMessage(channelID any, options ...
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]any{channelID}, options...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostMessage", reflect.TypeOf((*MockSlackAPIClient)(nil).PostMessage), varargs...)
+}
+
+// UpdateView mocks base method.
+func (m *MockSlackAPIClient) UpdateView(view slack.ModalViewRequest, externalID, hash, viewID string) (*slack.ViewResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateView", view, externalID, hash, viewID)
+	ret0, _ := ret[0].(*slack.ViewResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateView indicates an expected call of UpdateView.
+func (mr *MockSlackAPIClientMockRecorder) UpdateView(view, externalID, hash, viewID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateView", reflect.TypeOf((*MockSlackAPIClient)(nil).UpdateView), view, externalID, hash, viewID)
 }
 
 // MockSlackingway is a mock of Slackingway interface.
