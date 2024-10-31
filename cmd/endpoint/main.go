@@ -32,11 +32,19 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		headers.Add(key, value)
 	}
 
-	// Create a new Slack secrets verifier
+	// Validate the request
 	verifier, err := slack.NewSecretsVerifier(headers, os.Getenv("SLACK_SIGNING_SECRET"))
 	if err != nil {
 		log.Printf("Error creating verifier: %v", err)
 		return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+	}
+	if _, err := verifier.Write([]byte(request.Body)); err != nil {
+		log.Printf("Error writing body to verifier: %v", err)
+		return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+	}
+	if err = verifier.Ensure(); err != nil {
+		log.Printf("Invalid request: %v", err)
+		return events.APIGatewayProxyResponse{StatusCode: http.StatusUnauthorized}, nil
 	}
 
 	// Parse the request body
@@ -92,16 +100,6 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}, nil
 	}
 
-	// Validate the request
-	if _, err := verifier.Write([]byte(request.Body)); err != nil {
-		log.Printf("Error writing body to verifier: %v", err)
-		return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
-	}
-	if err = verifier.Ensure(); err != nil {
-		log.Printf("Invalid request: %v", err)
-		return events.APIGatewayProxyResponse{StatusCode: http.StatusUnauthorized}, nil
-	}
-
 	switch slackRequestBody.Type {
 	// Challenge request
 	case "url_verification":
@@ -113,7 +111,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			Body:       slackRequestBody.Challenge,
 		}, nil
 	// Slash command request
-	case "slash_command":
+	case "slash_command", "view_submission":
 		// Create a new AWS Lambda client
 		cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(os.Getenv("AWS_REGION")))
 		if err != nil {
