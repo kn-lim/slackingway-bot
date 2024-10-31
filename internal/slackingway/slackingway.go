@@ -14,21 +14,26 @@ import (
 
 // Body of request data from Slack
 type SlackRequestBody struct {
-	Timestamp   string `json:"timestamp"`
-	Type        string `json:"type"`
-	Challenge   string `json:"challenge"`
-	Token       string `json:"token"`
-	Command     string `json:"command"`
-	Text        string `json:"text"`
-	ResponseURL string `json:"response_url"`
-	UserID      string `json:"user_id"`
-	ChannelID   string `json:"channel_id"`
-	TeamID      string `json:"team_id"`
+	Timestamp   string     `json:"timestamp"`
+	Type        string     `json:"type"`
+	Challenge   string     `json:"challenge"`
+	Token       string     `json:"token"`
+	Command     string     `json:"command"`
+	Text        string     `json:"text"`
+	ResponseURL string     `json:"response_url"`
+	UserID      string     `json:"user_id"`
+	ChannelID   string     `json:"channel_id"`
+	TeamID      string     `json:"team_id"`
+	CallbackID  string     `json:"callback_id"`
+	TriggerID   string     `json:"trigger_id"`
+	View        slack.View `json:"view"`
 }
 
 type SlackAPIClient interface {
 	GetUserInfo(userID string) (*slack.User, error)
 	PostMessage(channelID string, options ...slack.MsgOption) (string, string, error)
+	OpenView(triggerID string, view slack.ModalViewRequest) (*slack.ViewResponse, error)
+	UpdateView(view slack.ModalViewRequest, externalID string, hash string, viewID string) (*slack.ViewResponse, error)
 }
 
 type Slackingway interface {
