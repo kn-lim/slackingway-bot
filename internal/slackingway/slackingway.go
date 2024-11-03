@@ -37,9 +37,10 @@ type SlackAPIClient interface {
 }
 
 type Slackingway interface {
-	// Slack Specific
 	NewResponse(message slack.Msg) (*http.Request, error)
 	SendResponse(request *http.Request) error
+	SendTextMessage(message, channelID string) error
+	SendBlockMessage(blocks []slack.Block, channelID string) error
 	WriteToHistory() error
 }
 
@@ -129,6 +130,42 @@ func (s *SlackingwayWrapper) WriteToHistory() error {
 	)
 	if err != nil {
 		log.Printf("Error posting message: %v", err)
+		return err
+	}
+
+	return nil
+}
+
+// SendTextMessage sends a message to a Slack channel
+func (s *SlackingwayWrapper) SendTextMessage(message, channelID string) error {
+	// Check if APIClient is nil
+	if s.APIClient == nil {
+		log.Printf("APIClient is nil")
+		return fmt.Errorf("APIClient is nil")
+	}
+
+	// Send the message to the channel
+	_, _, err := s.APIClient.PostMessage(channelID, slack.MsgOptionText(message, false))
+	if err != nil {
+		log.Printf("Error sending message: %v", err)
+		return err
+	}
+
+	return nil
+}
+
+// SendBlockMessage sends a message with blocks to a Slack channel
+func (s *SlackingwayWrapper) SendBlockMessage(blocks []slack.Block, channelID string) error {
+	// Check if APIClient is nil
+	if s.APIClient == nil {
+		log.Printf("APIClient is nil")
+		return fmt.Errorf("APIClient is nil")
+	}
+
+	// Send the message to the channel
+	_, _, err := s.APIClient.PostMessage(channelID, slack.MsgOptionBlocks(blocks...))
+	if err != nil {
+		log.Printf("Error sending message: %v", err)
 		return err
 	}
 

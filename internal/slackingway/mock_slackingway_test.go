@@ -21,6 +21,7 @@ import (
 type MockSlackAPIClient struct {
 	ctrl     *gomock.Controller
 	recorder *MockSlackAPIClientMockRecorder
+	isgomock struct{}
 }
 
 // MockSlackAPIClientMockRecorder is the mock recorder for MockSlackAPIClient.
@@ -110,6 +111,7 @@ func (mr *MockSlackAPIClientMockRecorder) UpdateView(view, externalID, hash, vie
 type MockSlackingway struct {
 	ctrl     *gomock.Controller
 	recorder *MockSlackingwayMockRecorder
+	isgomock struct{}
 }
 
 // MockSlackingwayMockRecorder is the mock recorder for MockSlackingway.
@@ -144,6 +146,20 @@ func (mr *MockSlackingwayMockRecorder) NewResponse(message any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NewResponse", reflect.TypeOf((*MockSlackingway)(nil).NewResponse), message)
 }
 
+// SendBlockMessage mocks base method.
+func (m *MockSlackingway) SendBlockMessage(blocks []slack.Block, channelID string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SendBlockMessage", blocks, channelID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SendBlockMessage indicates an expected call of SendBlockMessage.
+func (mr *MockSlackingwayMockRecorder) SendBlockMessage(blocks, channelID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendBlockMessage", reflect.TypeOf((*MockSlackingway)(nil).SendBlockMessage), blocks, channelID)
+}
+
 // SendResponse mocks base method.
 func (m *MockSlackingway) SendResponse(request *http.Request) error {
 	m.ctrl.T.Helper()
@@ -156,6 +172,20 @@ func (m *MockSlackingway) SendResponse(request *http.Request) error {
 func (mr *MockSlackingwayMockRecorder) SendResponse(request any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendResponse", reflect.TypeOf((*MockSlackingway)(nil).SendResponse), request)
+}
+
+// SendTextMessage mocks base method.
+func (m *MockSlackingway) SendTextMessage(message, channelID string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SendTextMessage", message, channelID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SendTextMessage indicates an expected call of SendTextMessage.
+func (mr *MockSlackingwayMockRecorder) SendTextMessage(message, channelID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendTextMessage", reflect.TypeOf((*MockSlackingway)(nil).SendTextMessage), message, channelID)
 }
 
 // WriteToHistory mocks base method.

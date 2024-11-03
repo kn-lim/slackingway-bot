@@ -110,3 +110,57 @@ func TestWriteToHistory(t *testing.T) {
 
 	assert.Nil(t, s.WriteToHistory())
 }
+
+// TestSendTextMessage tests the SendTextMessage function
+func TestSendTextMessage(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	message := "TestSendTextMessage"
+	channelID := "C12345"
+
+	// Create an empty SlackingwayWrapper instance
+	s := &slackingway.SlackingwayWrapper{}
+
+	assert.NotNil(t, s.SendTextMessage(message, channelID))
+
+	mockSlackAPIClient := NewMockSlackAPIClient(ctrl)
+	mockSlackAPIClient.EXPECT().PostMessage(gomock.Any(), gomock.Any()).Return("messageID", "timestamp", nil)
+
+	s = &slackingway.SlackingwayWrapper{
+		APIClient: mockSlackAPIClient,
+	}
+
+	assert.Nil(t, s.SendTextMessage(message, channelID))
+}
+
+// TestSendBlockMessage tests the SendTextMessage function
+func TestSendBlockMessage(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	blocks := []slack.Block{
+		&slack.SectionBlock{
+			Type: "section",
+			Text: &slack.TextBlockObject{
+				Type: "mrkdwn",
+				Text: "TestSendBlockMessage",
+			},
+		},
+	}
+	channelID := "C12345"
+
+	// Create an empty SlackingwayWrapper instance
+	s := &slackingway.SlackingwayWrapper{}
+
+	assert.NotNil(t, s.SendBlockMessage(blocks, channelID))
+
+	mockSlackAPIClient := NewMockSlackAPIClient(ctrl)
+	mockSlackAPIClient.EXPECT().PostMessage(gomock.Any(), gomock.Any()).Return("messageID", "timestamp", nil)
+
+	s = &slackingway.SlackingwayWrapper{
+		APIClient: mockSlackAPIClient,
+	}
+
+	assert.Nil(t, s.SendBlockMessage(blocks, channelID))
+}
