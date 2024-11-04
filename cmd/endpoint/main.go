@@ -52,7 +52,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 
 	// Check content type
 	switch request.Headers["Content-Type"] {
-	// Slash Command
+	// Slash Command & Interactive Components
 	case "application/x-www-form-urlencoded":
 		// log.Printf("Found application/x-www-form-urlencoded request")
 
@@ -70,7 +70,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			log.Printf("Error parsing request body: %v", err)
 			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
 		}
-		slackRequestBody.Type = "slash_command"
+		slackRequestBody.Type = formData.Get("type")
 		slackRequestBody.Token = formData.Get("token")
 		slackRequestBody.Command = formData.Get("command")
 		slackRequestBody.Text = formData.Get("text")
@@ -122,32 +122,27 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			StatusCode: http.StatusOK,
 			Body:       slackRequestBody.Challenge,
 		}, nil
-	// Slash command request
+	// Slash command & interactive components
 	case "slash_command", "view_submission":
-		// Check if the request has a trigger
-		if slackRequestBody.TriggerID != "" {
-			s := slackingway.NewSlackingway(&slackRequestBody)
-
-			switch slackRequestBody.Command {
-			case "/echo":
-				err := s.WriteToHistory()
-				if err != nil {
-					log.Printf("Error writing to history: %v", err)
-					return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
-				}
-
-				err = slackingway.Echo(s)
-				if err != nil {
-					log.Printf("Error echoing: %v", err)
-					return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
-				}
-
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusOK}, nil
-			default:
-				log.Printf("Unknown command with trigger: %s", slackRequestBody.Command)
+		s := slackingway.NewSlackingway(&slackRequestBody)
+		switch slackRequestBody.Command {
+		// Add all slash commands that involves trigger_id
+		case "/echo":
+			err := s.WriteToHistory()
+			if err != nil {
+				log.Printf("Error writing to history: %v", err)
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
 			}
-		} else {
+
+			err = slackingway.Echo(s)
+			if err != nil {
+				log.Printf("Error echoing: %v", err)
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+			}
+
+			return events.APIGatewayProxyResponse{StatusCode: http.StatusOK}, nil
+		// For all other slash commands
+		default:
 			// Create a new AWS Lambda client
 			cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(os.Getenv("AWS_REGION")))
 			if err != nil {
