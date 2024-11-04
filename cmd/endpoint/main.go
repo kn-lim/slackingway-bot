@@ -143,12 +143,6 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		switch slackRequestBody.Command {
 		// Add all slash commands that involves trigger_id
 		case "/echo":
-			err := s.WriteToHistory()
-			if err != nil {
-				log.Printf("Error writing to history: %v", err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
-			}
-
 			err = slackingway.Echo(s)
 			if err != nil {
 				log.Printf("Error echoing: %v", err)

@@ -55,6 +55,14 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 			return errors.New("Unknown command")
 		}
 	case "view_submission":
+		// Log the view
+		viewString, err := utils.GetStructFields(slackRequestBody.View)
+		if err != nil {
+			log.Printf("Error parsing view: %v", err)
+			return err
+		}
+		log.Printf("Slack View: %v", viewString)
+
 		// Update the modal
 		var updatedModal slack.ModalViewRequest
 		switch slackRequestBody.View.CallbackID {
@@ -65,7 +73,7 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 			return errors.New("Unknown CallbackID")
 		}
 
-		err := s.WriteToHistory()
+		err = s.WriteToHistory()
 		if err != nil {
 			return err
 		}
