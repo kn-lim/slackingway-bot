@@ -57,11 +57,11 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 	case "view_submission":
 		// Update the modal
 		var updatedModal slack.ModalViewRequest
-		switch slackRequestBody.CallbackID {
+		switch slackRequestBody.View.CallbackID {
 		case "echo":
 			updatedModal = slackingway.UpdateEchoModal()
 		default:
-			log.Printf("Unknown CallbackID: %v", slackRequestBody.CallbackID)
+			log.Printf("Unknown CallbackID: %v", slackRequestBody.View.CallbackID)
 			return errors.New("Unknown CallbackID")
 		}
 
