@@ -56,8 +56,6 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	case "application/x-www-form-urlencoded":
 		// log.Printf("Found application/x-www-form-urlencoded request")
 
-		slackRequestBody.Type = "interaction"
-
 		// Get Time Stamp
 		timestamp, err := strconv.ParseInt(request.Headers["X-Slack-Request-Timestamp"], 10, 64)
 		if err != nil {
@@ -72,18 +70,25 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			log.Printf("Error parsing request body: %v", err)
 			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
 		}
+		slackRequestBody.Type = "interaction"
+		slackRequestBody.Token = formData.Get("token")
+		slackRequestBody.Command = formData.Get("command")
+		slackRequestBody.Text = formData.Get("text")
+		slackRequestBody.ResponseURL = formData.Get("response_url")
+		slackRequestBody.UserID = formData.Get("user_id")
+		slackRequestBody.ChannelID = formData.Get("channel_id")
+		slackRequestBody.TeamID = formData.Get("team_id")
+		slackRequestBody.CallbackID = formData.Get("callback_id")
+		slackRequestBody.TriggerID = formData.Get("trigger_id")
 
-		// Convert form data to JSON string
-		formDataJSON, err := json.Marshal(formData)
-		if err != nil {
-			log.Printf("Error marshalling form data to JSON: %v", err)
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
-		}
-
-		// Unmarshal JSON string into slackRequestBody
-		if err := json.Unmarshal(formDataJSON, &slackRequestBody); err != nil {
-			log.Printf("Error unmarshalling JSON: %v", err)
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+		// Parse the view
+		if formData.Get("view") != "" {
+			var view slack.View
+			if err := json.Unmarshal([]byte(formData.Get("view")), &view); err != nil {
+				log.Printf("Error unmarshaling view: %v", err)
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+			}
+			slackRequestBody.View = view
 		}
 
 		log.Printf("Parsed form data: %v", slackRequestBody)
