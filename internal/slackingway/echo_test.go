@@ -1,6 +1,7 @@
 package slackingway_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/kn-lim/slackingway-bot/internal/slackingway"
@@ -14,17 +15,31 @@ func TestEcho(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	MockSlackAPIClient := NewMockSlackAPIClient(ctrl)
-	MockSlackAPIClient.EXPECT().OpenView(gomock.Any(), gomock.Any()).Return(&slack.ViewResponse{}, nil)
+	t.Run("Error on OpenView", func(t *testing.T) {
+		MockSlackAPIClient := NewMockSlackAPIClient(ctrl)
+		MockSlackAPIClient.EXPECT().OpenView(gomock.Any(), gomock.Any()).Return(&slack.ViewResponse{}, errors.New("error!!!"))
 
-	s := &slackingway.SlackingwayWrapper{
-		APIClient:        MockSlackAPIClient,
-		SlackRequestBody: &slackingway.SlackRequestBody{TriggerID: "definitely_a_valid_trigger_id"},
-	}
-	err := slackingway.Echo(s)
+		s := &slackingway.SlackingwayWrapper{
+			APIClient:        MockSlackAPIClient,
+			SlackRequestBody: &slackingway.SlackRequestBody{TriggerID: "definitely_a_valid_trigger_id"},
+		}
+		err := slackingway.Echo(s)
 
-	// Run test
-	assert.Nil(t, err)
+		assert.NotNil(t, err)
+	})
+
+	t.Run("Successful Echo", func(t *testing.T) {
+		MockSlackAPIClient := NewMockSlackAPIClient(ctrl)
+		MockSlackAPIClient.EXPECT().OpenView(gomock.Any(), gomock.Any()).Return(&slack.ViewResponse{}, nil)
+
+		s := &slackingway.SlackingwayWrapper{
+			APIClient:        MockSlackAPIClient,
+			SlackRequestBody: &slackingway.SlackRequestBody{TriggerID: "definitely_a_valid_trigger_id"},
+		}
+		err := slackingway.Echo(s)
+
+		assert.Nil(t, err)
+	})
 }
 
 func TestGenerateEchoModal(t *testing.T) {
