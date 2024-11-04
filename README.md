@@ -32,29 +32,16 @@ From the project home directory:
 - **Endpoint Function**: `CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags lambda.norpc -o binary/bootstrap ./cmd/endpoint/`
 - **Task Function**: `CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags lambda.norpc -o binary/bootstrap ./cmd/task/`
 
-### Build Environment Variables
-
-| Name | Description |
-| - | - |
-| `AWS_REGION` | AWS Region of the Lambda Functions |
-
 ## Environment Variables
 
 ### Endpoint Lambda Function
-
-#### AWS
-
-| Name | Description |
-| - | - |
-| `TASK_FUNCTION_NAME` | Name of the Task Lambda Function |
-
-#### Slack
 
 | Name | Description |
 | - | - |
 | `SLACK_HISTORY_CHANNEL_ID` | Slackingway's History Channel ID |
 | `SLACK_OAUTH_TOKEN` | Slack App's OAuth Token |
 | `SLACK_SIGNING_SECRET` | Slack App Signing Secret |
+| `TASK_FUNCTION_NAME` | Name of the Task Lambda Function |
 
 ### Task Lambda Function
 
@@ -76,7 +63,7 @@ To quickly spin up **slackingway-bot** on AWS, use the [Terraform module](https:
       - **API type**: REST API
       - **Security**: Open
 3. Create a **task** Lambda function on AWS. 
-    - For the `Runtime`, select `Provide your own bootstrap on Amazon Linux 2` under `Custom runtime`.
+    - For the `Runtime`, select `Amazon Linux 2023`.
     - For the `Architecture`, select `x86_64`.
 4. Archive the `bootstrap` binary in a .zip file and upload it to the Lambda functions.
 5. In the `Configuration` tab, add in the required environment variables to the Lambda functions.
