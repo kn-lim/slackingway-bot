@@ -85,12 +85,14 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		slackRequestBody.TriggerID = formData.Get("trigger_id")
 
 		// Parse the view
-		var view slack.View
-		if err := json.Unmarshal([]byte(formData.Get("view")), &view); err != nil {
-			log.Printf("Error unmarshaling view: %v", err)
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+		if formData.Get("view") != "" {
+			var view slack.View
+			if err := json.Unmarshal([]byte(formData.Get("view")), &view); err != nil {
+				log.Printf("Error unmarshaling view: %v", err)
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+			}
+			slackRequestBody.View = view
 		}
-		slackRequestBody.View = view
 
 		log.Printf("Parsed form data: %v", slackRequestBody)
 	// Any other Slack request
