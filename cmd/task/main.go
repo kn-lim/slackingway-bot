@@ -21,7 +21,6 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 
 	// Parse the request
 	var message slack.Msg
-	var err error
 	switch slackRequestBody.Type {
 	case "slash_command":
 		switch slackRequestBody.Command {
@@ -42,11 +41,6 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 			}
 
 			message, err = slackingway.DelayedPing(s)
-			if err != nil {
-				return err
-			}
-		case "/echo":
-			err = slackingway.Echo(s)
 			if err != nil {
 				return err
 			}

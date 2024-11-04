@@ -70,9 +70,6 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			log.Printf("Error parsing request body: %v", err)
 			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
 		}
-
-		log.Printf("Form data: %v", formData)
-
 		slackRequestBody.Type = "slash_command"
 		slackRequestBody.Token = formData.Get("token")
 		slackRequestBody.Command = formData.Get("command")
@@ -127,41 +124,66 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		}, nil
 	// Slash command request
 	case "slash_command", "view_submission":
-		// Create a new AWS Lambda client
-		cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(os.Getenv("AWS_REGION")))
-		if err != nil {
-			log.Printf("Error loading AWS config: %v", err)
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
-		}
-		client := lambdaSvc.NewFromConfig(cfg)
+		// Check if the request has a trigger
+		if slackRequestBody.TriggerID != "" {
+			s := slackingway.NewSlackingway(&slackRequestBody)
 
-		// Create the payload for the task function
-		payload, err := json.Marshal(slackRequestBody)
-		if err != nil {
-			log.Printf("Error marshalling payload: %v", err)
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
-		}
+			switch slackRequestBody.Command {
+			case "/echo":
+				err := s.WriteToHistory()
+				if err != nil {
+					log.Printf("Error writing to history: %v", err)
+					return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+				}
 
-		// Create the input for the task function
-		input := &lambdaSvc.InvokeInput{
-			FunctionName:   aws.String(os.Getenv("TASK_FUNCTION_NAME")),
-			Payload:        payload,
-			InvocationType: types.InvocationTypeEvent,
-		}
+				err = slackingway.Echo(s)
+				if err != nil {
+					log.Printf("Error echoing: %v", err)
+					return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+				}
 
-		// Invoke the task function
-		if _, err = client.Invoke(ctx, input); err != nil {
-			log.Printf("Error invoking task function: %v", err)
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
-		}
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusOK}, nil
+			default:
+				log.Printf("Unknown command with trigger: %s", slackRequestBody.Command)
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+			}
+		} else {
+			// Create a new AWS Lambda client
+			cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(os.Getenv("AWS_REGION")))
+			if err != nil {
+				log.Printf("Error loading AWS config: %v", err)
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+			}
+			client := lambdaSvc.NewFromConfig(cfg)
 
-		// Return an empty response
-		headers := make(map[string]string)
-		headers["Content-Type"] = "application/json"
-		return events.APIGatewayProxyResponse{
-			Headers:    headers,
-			StatusCode: http.StatusOK,
-		}, nil
+			// Create the payload for the task function
+			payload, err := json.Marshal(slackRequestBody)
+			if err != nil {
+				log.Printf("Error marshalling payload: %v", err)
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+			}
+
+			// Create the input for the task function
+			input := &lambdaSvc.InvokeInput{
+				FunctionName:   aws.String(os.Getenv("TASK_FUNCTION_NAME")),
+				Payload:        payload,
+				InvocationType: types.InvocationTypeEvent,
+			}
+
+			// Invoke the task function
+			if _, err = client.Invoke(ctx, input); err != nil {
+				log.Printf("Error invoking task function: %v", err)
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+			}
+
+			// Return an empty response
+			headers := make(map[string]string)
+			headers["Content-Type"] = "application/json"
+			return events.APIGatewayProxyResponse{
+				Headers:    headers,
+				StatusCode: http.StatusOK,
+			}, nil
+		}
 	// Unknown request type
 	default:
 		log.Printf("Unknown request type: %s", slackRequestBody.Type)
