@@ -70,7 +70,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			log.Printf("Error parsing request body: %v", err)
 			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
 		}
-		slackRequestBody.Type = formData.Get("type")
+		slackRequestBody.Type = "interaction"
 		slackRequestBody.Token = formData.Get("token")
 		slackRequestBody.Command = formData.Get("command")
 		slackRequestBody.Text = formData.Get("text")
@@ -122,8 +122,8 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			StatusCode: http.StatusOK,
 			Body:       slackRequestBody.Challenge,
 		}, nil
-	// Slash command & interactive components
-	case "slash_command", "view_submission":
+	// User interaction request
+	case "interaction":
 		s := slackingway.NewSlackingway(&slackRequestBody)
 		switch slackRequestBody.Command {
 		// Add all slash commands that involves trigger_id
