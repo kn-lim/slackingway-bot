@@ -19,6 +19,7 @@ import (
 	"github.com/slack-go/slack"
 
 	"github.com/kn-lim/slackingway-bot/internal/slackingway"
+	"github.com/kn-lim/slackingway-bot/internal/utils"
 )
 
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -100,7 +101,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			}
 		}
 
-		requestString, err := slackingway.GetStructFields(slackRequestBody)
+		requestString, err := utils.GetStructFields(slackRequestBody)
 		if err != nil {
 			log.Printf("Error parsing form data: %v", err)
 			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil

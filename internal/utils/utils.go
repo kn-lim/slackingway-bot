@@ -1,4 +1,4 @@
-package slackingway
+package utils
 
 import (
 	"errors"
