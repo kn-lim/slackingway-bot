@@ -70,6 +70,9 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			log.Printf("Error parsing request body: %v", err)
 			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
 		}
+
+		log.Printf("Form data: %v", formData)
+
 		slackRequestBody.Type = "slash_command"
 		slackRequestBody.Token = formData.Get("token")
 		slackRequestBody.Command = formData.Get("command")
