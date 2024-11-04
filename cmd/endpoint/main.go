@@ -100,7 +100,12 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			}
 		}
 
-		log.Printf("Parsed form data: %v", slackRequestBody)
+		requestString, err := slackingway.GetStructFields(slackRequestBody)
+		if err != nil {
+			log.Printf("Error parsing form data: %v", err)
+			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+		}
+		log.Printf("Parsed form data: %s", requestString)
 	// Any other Slack request
 	case "application/json":
 		// log.Printf("Found application/json request")

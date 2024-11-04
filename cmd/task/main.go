@@ -14,7 +14,12 @@ import (
 
 func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody) error {
 	// Log the request
-	log.Printf("Slack Request Body: %v", slackRequestBody)
+	requestString, err := slackingway.GetStructFields(slackRequestBody)
+	if err != nil {
+		log.Printf("Error parsing form data: %v", err)
+		return err
+	}
+	log.Printf("Slack Request Body: %v", requestString)
 
 	// Initialize Slackingway
 	s := slackingway.NewSlackingway(&slackRequestBody)
