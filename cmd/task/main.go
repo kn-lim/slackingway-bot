@@ -21,26 +21,32 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 
 	// Parse the request
 	var message slack.Msg
-	switch slackRequestBody.Command {
-	case "/ping":
-		err := s.WriteToHistory()
-		if err != nil {
-			return err
-		}
+	switch slackRequestBody.Type {
+	case "slash_command":
+		switch slackRequestBody.Command {
+		case "/ping":
+			err := s.WriteToHistory()
+			if err != nil {
+				return err
+			}
 
-		message, err = slackingway.Ping()
-		if err != nil {
-			return err
-		}
-	case "/delayed-ping":
-		err := s.WriteToHistory()
-		if err != nil {
-			return err
-		}
+			message, err = slackingway.Ping()
+			if err != nil {
+				return err
+			}
+		case "/delayed-ping":
+			err := s.WriteToHistory()
+			if err != nil {
+				return err
+			}
 
-		message, err = slackingway.DelayedPing(s)
-		if err != nil {
-			return err
+			message, err = slackingway.DelayedPing(s)
+			if err != nil {
+				return err
+			}
+		default:
+			log.Printf("Unknown command: %v", slackRequestBody.Command)
+			return errors.New("Unknown command")
 		}
 	case "view_submission":
 		// Update the modal
@@ -64,8 +70,8 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 			return err
 		}
 	default:
-		log.Printf("Unknown command: %v", slackRequestBody.Command)
-		return errors.New("Unknown command")
+		log.Printf("Unknown request type: %v", slackRequestBody.Type)
+		return errors.New("Unknown request type")
 	}
 
 	// Check if message is not empty

@@ -78,7 +78,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
 			}
 		} else {
-			slackRequestBody.Type = "interaction"
+			slackRequestBody.Type = "slash_command"
 			slackRequestBody.Token = formData.Get("token")
 			slackRequestBody.Command = formData.Get("command")
 			slackRequestBody.Text = formData.Get("text")
@@ -132,7 +132,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			Body:       slackRequestBody.Challenge,
 		}, nil
 	// User interaction request
-	case "interaction":
+	case "slash_command", "view_submission":
 		s := slackingway.NewSlackingway(&slackRequestBody)
 		switch slackRequestBody.Command {
 		// Add all slash commands that involves trigger_id
