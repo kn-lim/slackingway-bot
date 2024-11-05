@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
-	"os"
+	"time"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/slack-go/slack"
@@ -27,6 +27,7 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 
 	// Parse the request
 	var message slack.Msg
+	var updatedModal slack.ModalViewRequest
 	isSlashCommand := false
 	switch slackRequestBody.Type {
 	case "slash_command":
@@ -66,11 +67,8 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 		log.Printf("Slack View: %v", viewString)
 
 		switch slackRequestBody.View.CallbackID {
-		case "echo":
-			message, err = slackingway.ReturnEcho(s)
-			if err != nil {
-				return err
-			}
+		case "/echo":
+			updatedModal = slackingway.UpdateEchoModal()
 		default:
 			log.Printf("Unknown CallbackID: %v", slackRequestBody.View.CallbackID)
 			return errors.New("Unknown CallbackID")
@@ -100,8 +98,9 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 			}
 		}
 	} else {
-		// Send the message to Slack
-		if err := s.SendTextMessage(message.Text, os.Getenv("SLACK_OUTPUT_CHANNEL_ID")); err != nil {
+		_, err = s.APIClient.UpdateView(updatedModal, "", slackRequestBody.View.Hash, slackRequestBody.View.ID)
+		time.Sleep(time.Second * 2) // Delay to see the updated modal
+		if err != nil {
 			return err
 		}
 	}

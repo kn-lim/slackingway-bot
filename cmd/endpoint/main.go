@@ -72,14 +72,34 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
 		}
 
-		log.Printf("Form Data: %v", formData)
-
 		// Check if the request has a payload
 		if formData.Get("payload") != "" {
+			// Parse the payload
 			if err := json.Unmarshal([]byte(formData.Get("payload")), &slackRequestBody); err != nil {
 				log.Printf("Error parsing payload: %v", err)
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
 			}
+			slackRequestBody.Command = slackRequestBody.CallbackID
+
+			// Parse the payload as a map
+			var payloadMap map[string]interface{}
+			if err := json.Unmarshal([]byte(formData.Get("payload")), &payloadMap); err != nil {
+				log.Printf("Error parsing payload: %v", err)
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+			}
+
+			// Get User ID
+			user, ok := payloadMap["user"].(map[string]interface{})
+			if !ok {
+				log.Println("User field not found")
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+			}
+			userID, ok := user["id"].(string)
+			if !ok {
+				log.Println("User ID field not found")
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+			}
+			slackRequestBody.UserID = userID
 		} else {
 			slackRequestBody.Type = "slash_command"
 			slackRequestBody.Token = formData.Get("token")
@@ -91,18 +111,19 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			slackRequestBody.TeamID = formData.Get("team_id")
 			slackRequestBody.CallbackID = formData.Get("callback_id")
 			slackRequestBody.TriggerID = formData.Get("trigger_id")
-		}
 
-		// Parse the view
-		if formData.Get("view") != "" {
-			var view slack.View
-			if err := json.Unmarshal([]byte(formData.Get("view")), &view); err != nil {
-				log.Printf("Error unmarshaling view: %v", err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+			// Parse the view
+			if formData.Get("view") != "" {
+				var view slack.View
+				if err := json.Unmarshal([]byte(formData.Get("view")), &view); err != nil {
+					log.Printf("Error unmarshaling view: %v", err)
+					return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
+				}
+				slackRequestBody.View = view
 			}
-			slackRequestBody.View = view
 		}
 
+		// Log the parsed form data
 		requestString, err := utils.GetStructFields(slackRequestBody)
 		if err != nil {
 			log.Printf("Error parsing form data: %v", err)
