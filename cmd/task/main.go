@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"time"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/slack-go/slack"
@@ -63,23 +62,18 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 		}
 		log.Printf("Slack View: %v", viewString)
 
-		// Update the modal
-		var updatedModal slack.ModalViewRequest
 		switch slackRequestBody.View.CallbackID {
 		case "echo":
-			updatedModal = slackingway.UpdateEchoModal()
+			message, err = slackingway.ReturnEcho(s)
+			if err != nil {
+				return err
+			}
 		default:
 			log.Printf("Unknown CallbackID: %v", slackRequestBody.View.CallbackID)
 			return errors.New("Unknown CallbackID")
 		}
 
 		err = s.WriteToHistory()
-		if err != nil {
-			return err
-		}
-
-		_, err = s.APIClient.UpdateView(updatedModal, slackRequestBody.View.ExternalID, slackRequestBody.View.Hash, slackRequestBody.View.ID)
-		time.Sleep(time.Second * 2) // Delay to see the updated modal
 		if err != nil {
 			return err
 		}

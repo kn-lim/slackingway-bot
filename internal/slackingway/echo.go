@@ -15,6 +15,19 @@ func Echo(s *SlackingwayWrapper) error {
 	return nil
 }
 
+func ReturnEcho(s *SlackingwayWrapper) (slack.Msg, error) {
+	// Get the text from the modal
+	text := s.SlackRequestBody.View.State.Values["text"]["text"].Value
+
+	// Create the response message
+	message := slack.Msg{
+		Text:            text,
+		ReplaceOriginal: true,
+	}
+
+	return message, nil
+}
+
 func GenerateEchoModal() slack.ModalViewRequest {
 	// Create a new Slack ModalViewRequest
 	titleText := slack.NewTextBlockObject("plain_text", "Echo", false, false)
