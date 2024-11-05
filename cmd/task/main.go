@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"os"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/slack-go/slack"
@@ -26,8 +27,10 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 
 	// Parse the request
 	var message slack.Msg
+	isSlashCommand := false
 	switch slackRequestBody.Type {
 	case "slash_command":
+		isSlashCommand = true
 		switch slackRequestBody.Command {
 		case "/ping":
 			err := s.WriteToHistory()
@@ -82,16 +85,23 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 		return errors.New("Unknown request type")
 	}
 
-	// Check if message is not empty
-	if message.Text != "" {
-		// Create the response
-		response, err := s.NewResponse(message)
-		if err != nil {
-			return err
-		}
+	if isSlashCommand {
+		// Check if message is not empty
+		if message.Text != "" {
+			// Create the response
+			response, err := s.NewResponse(message)
+			if err != nil {
+				return err
+			}
 
-		// Send the response to Slack
-		if err := s.SendResponse(response); err != nil {
+			// Send the response to Slack
+			if err := s.SendResponse(response); err != nil {
+				return err
+			}
+		}
+	} else {
+		// Send the message to Slack
+		if err := s.SendTextMessage(message.Text, os.Getenv("SLACK_OUTPUT_CHANNEL_ID")); err != nil {
 			return err
 		}
 	}
