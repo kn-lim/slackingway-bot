@@ -49,6 +49,7 @@ From the project home directory:
 | - | - |
 | `SLACK_HISTORY_CHANNEL_ID` | Slackingway's History Channel ID |
 | `SLACK_OAUTH_TOKEN` | Slack App's OAuth Token |
+| `SLACK_OUTPUT_CHANNEL_ID` | Slackingway's Output Channel ID |
 
 ## AWS Setup
 
