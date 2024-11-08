@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "this" {
   filename      = var.filename
-  function_name = "${var.name}"
+  function_name = var.name
   role          = aws_iam_role.this.arn
   handler       = "hello.handler" # Not used
   runtime       = var.runtime
@@ -9,9 +9,9 @@ resource "aws_lambda_function" "this" {
   environment {
     variables = {
       SLACK_HISTORY_CHANNEL_ID = var.slack_history_channel_id
-      SLACK_OAUTH_TOKEN = var.slack_oauth_token
-      SLACK_OUTPUT_CHANNEL_ID = var.slack_output_channel_id
-      SLACK_SIGNING_SECRET = var.slack_signing_secret
+      SLACK_OAUTH_TOKEN        = var.slack_oauth_token
+      SLACK_OUTPUT_CHANNEL_ID  = var.slack_output_channel_id
+      SLACK_SIGNING_SECRET     = var.slack_signing_secret
     }
   }
 
