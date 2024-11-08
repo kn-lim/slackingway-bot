@@ -15,10 +15,10 @@ locals {
   slack_history_channel_id = ""
   slack_oauth_token        = ""
 
-  # These non-empty .zip files are needed only when creating resources
-  # Can be deleted/moved afterwards
-  endpoint_filename = "endpoint.zip"
-  task_filename     = "task.zip"
+  # These non-empty .zip files are needed only when creating resources.
+  # Run the build command and zip the binary file.
+  # The .zip file an be deleted/moved afterwards.
+  filename = "bootstrap.zip"
 }
 
 module "slackingway-bot" {
@@ -28,24 +28,23 @@ module "slackingway-bot" {
   # Required
 
   account_id               = local.account_id
-  endpoint_filename        = local.endpoint_filename
-  slack_signing_secret     = local.slack_signing_secret
+  filename                 = local.endpoint_filename
   slack_history_channel_id = local.slack_history_channel_id
   slack_oauth_token        = local.slack_oauth_token
-  task_filename            = local.task_filename
+  slack_output_channel_id  = local.slack_output_channel_id
+  slack_signing_secret     = local.slack_signing_secret
 
   # Optional
 
-  # endpoint_timeout = 3
-  # name = local.name
-  # log_format = "Text
-  # region = "us-west-2"
+  # name              = local.name
+  # log_format        = "Text"
+  # region            = "us-west-2"
   # retention_in_days = 3
-  # runtime = "provided.al2023"
+  # runtime           = "provided.al2023"
   # tags = {
   #   App = local.name
   # }
-  # task_timeout = 3
+  # timeout = 300
 }
 
 output "api_endpoint" {
