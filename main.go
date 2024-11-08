@@ -125,6 +125,22 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			log.Printf("Unknown command: %v", s.SlackRequestBody.Command)
 			return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}, errors.New("Unknown command")
 		}
+
+		// Send the response to Slack if there is a message
+		if message.Text != "" {
+			// Create the response
+			response, err := s.NewResponse(message)
+			if err != nil {
+				log.Printf("Error creating response: %v", err)
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
+			}
+
+			// Send the response
+			if err := s.SendResponse(response); err != nil {
+				log.Printf("Error sending response: %v", err)
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
+			}
+		}
 	case "view_submission":
 		if DEBUG {
 			// Log the view
@@ -153,25 +169,14 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			log.Printf("Unknown CallbackID: %v", s.SlackRequestBody.View.CallbackID)
 			return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}, errors.New("Unknown CallbackID")
 		}
+
+		if err := s.SendTextMessage(message.Text, os.Getenv("SLACK_OUTPUT_CHANNEL_ID")); err != nil {
+			log.Printf("Error sending message: %v", err)
+			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
+		}
 	default:
 		log.Printf("Unknown request type: %s", s.SlackRequestBody.Type)
 		return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}, errors.New("Unknown request type")
-	}
-
-	// Send the response to Slack if there is a message
-	if message.Text != "" {
-		// Create the response
-		response, err := s.NewResponse(message)
-		if err != nil {
-			log.Printf("Error creating response: %v", err)
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
-		}
-
-		// Send the response
-		if err := s.SendResponse(response); err != nil {
-			log.Printf("Error sending response: %v", err)
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
-		}
 	}
 
 	// Return an empty response
