@@ -37,6 +37,7 @@ module "slackingway-bot" {
 
   # Optional
 
+  # debug             = "false" 
   # name              = local.name
   # log_format        = "Text"
   # region            = "us-west-2"
@@ -90,6 +91,7 @@ output "api_endpoint" {
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_account_id"></a> [account\_id](#input\_account\_id) | The AWS account ID | `string` | n/a | yes |
+| <a name="input_debug"></a> [debug](#input\_debug) | Enable debug mode | `string` | `false` | no |
 | <a name="input_filename"></a> [filename](#input\_filename) | The filename to upload to the Lambda function | `string` | n/a | yes |
 | <a name="input_log_format"></a> [log\_format](#input\_log\_format) | The log format for the CloudWatch logs | `string` | `"Text"` | no |
 | <a name="input_name"></a> [name](#input\_name) | The name of the resources | `string` | `"slackingway-bot"` | no |
