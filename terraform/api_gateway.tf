@@ -1,13 +1,13 @@
 resource "aws_api_gateway_rest_api" "this" {
-  name        = "${var.name}-endpoint-API"
-  description = "API Gateway for ${var.name}-endpoint"
+  name        = "${var.name}-API"
+  description = "API Gateway for ${var.name}"
   tags        = var.tags
 }
 
 resource "aws_api_gateway_resource" "this" {
   rest_api_id = aws_api_gateway_rest_api.this.id
   parent_id   = aws_api_gateway_rest_api.this.root_resource_id
-  path_part   = "endpoint"
+  path_part   = var.name
 }
 
 resource "aws_api_gateway_method" "this" {
