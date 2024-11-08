@@ -34,22 +34,14 @@ From the project home directory:
 
 ## Environment Variables
 
-### Endpoint Lambda Function
-
-| Name | Description |
-| - | - |
-| `SLACK_HISTORY_CHANNEL_ID` | Slackingway's History Channel ID |
-| `SLACK_OAUTH_TOKEN` | Slack App's OAuth Token |
-| `SLACK_SIGNING_SECRET` | Slack App Signing Secret |
-| `TASK_FUNCTION_NAME` | Name of the Task Lambda Function |
-
-### Task Lambda Function
+### Lambda Function
 
 | Name | Description |
 | - | - |
 | `SLACK_HISTORY_CHANNEL_ID` | Slackingway's History Channel ID |
 | `SLACK_OAUTH_TOKEN` | Slack App's OAuth Token |
 | `SLACK_OUTPUT_CHANNEL_ID` | Slackingway's Output Channel ID |
+| `SLACK_SIGNING_SECRET` | Slack App Signing Secret |
 
 ## AWS Setup
 

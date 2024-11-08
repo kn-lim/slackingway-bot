@@ -4,29 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/slack-go/slack"
 )
-
-// Body of request data from Slack
-type SlackRequestBody struct {
-	Timestamp   string     `json:"timestamp"`
-	Type        string     `json:"type"`
-	Challenge   string     `json:"challenge"`
-	Token       string     `json:"token"`
-	Command     string     `json:"command"`
-	Text        string     `json:"text"`
-	ResponseURL string     `json:"response_url"`
-	UserID      string     `json:"user_id"`
-	ChannelID   string     `json:"channel_id"`
-	TeamID      string     `json:"team_id"`
-	CallbackID  string     `json:"callback_id"`
-	TriggerID   string     `json:"trigger_id"`
-	View        slack.View `json:"view"`
-}
 
 type SlackAPIClient interface {
 	GetUserInfo(userID string) (*slack.User, error)
@@ -44,6 +28,7 @@ type Slackingway interface {
 }
 
 type SlackingwayWrapper struct {
+	Debug            bool
 	APIClient        SlackAPIClient
 	HTTPClient       *http.Client
 	SlackRequestBody *SlackRequestBody
@@ -52,6 +37,7 @@ type SlackingwayWrapper struct {
 // NewSlackingway creates a new SlackingwayWrapper
 func NewSlackingway(s *SlackRequestBody) *SlackingwayWrapper {
 	return &SlackingwayWrapper{
+		Debug:            os.Getenv("DEBUG") == "true",
 		APIClient:        slack.New(os.Getenv("SLACK_OAUTH_TOKEN")),
 		HTTPClient:       &http.Client{},
 		SlackRequestBody: s,
@@ -89,9 +75,11 @@ func (s *SlackingwayWrapper) SendResponse(request *http.Request) error {
 	defer response.Body.Close()
 
 	// Log the response status and body
-	// log.Printf("Response status: %v", response.Status)
-	// responseBodyBytes, _ := io.ReadAll(response.Body)
-	// log.Printf("Response body: %v", string(responseBodyBytes))
+	if s.Debug {
+		log.Printf("Response status: %v", response.Status)
+		responseBodyBytes, _ := io.ReadAll(response.Body)
+		log.Printf("Response body: %v", string(responseBodyBytes))
+	}
 
 	// Check for non-OK status
 	if response.StatusCode != http.StatusOK {
