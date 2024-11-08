@@ -77,37 +77,24 @@ func (s *SlackRequestBody) ParsePayload(payload string) error {
 // ParseSlashCommand parses the slash command request from Slack
 func (s *SlackRequestBody) ParseSlashCommand(requestData url.Values) error {
 	s.Type = "slash_command"
-	// s.Token = requestData.Get("token")
-	// s.Command = requestData.Get("command")
-	// s.Text = requestData.Get("text")
-	// s.ResponseURL = requestData.Get("response_url")
-	// s.UserID = requestData.Get("user_id")
-	// s.ChannelID = requestData.Get("channel_id")
-	// s.TeamID = requestData.Get("team_id")
-	// s.CallbackID = requestData.Get("callback_id")
-	// s.TriggerID = requestData.Get("trigger_id")
+	s.Token = requestData.Get("token")
+	s.Command = requestData.Get("command")
+	s.Text = requestData.Get("text")
+	s.ResponseURL = requestData.Get("response_url")
+	s.UserID = requestData.Get("user_id")
+	s.ChannelID = requestData.Get("channel_id")
+	s.TeamID = requestData.Get("team_id")
+	s.CallbackID = requestData.Get("callback_id")
+	s.TriggerID = requestData.Get("trigger_id")
 
-	// // Parse the view
-	// if requestData.Get("view") != "" {
-	// 	var view slack.View
-	// 	if err := json.Unmarshal([]byte(requestData.Get("view")), &view); err != nil {
-	// 		log.Printf("Error unmarshaling view: %v", err)
-	// 		return nil
-	// 	}
-	// 	s.View = view
-	// }
-
-	// Convert url.Values to JSON string
-	jsonData, err := json.Marshal(requestData)
-	if err != nil {
-		log.Printf("Error marshalling request data to JSON: %v", err)
-		return err
-	}
-
-	// Unmarshal JSON string into SlackRequestBody
-	if err := json.Unmarshal(jsonData, s); err != nil {
-		log.Printf("Error unmarshalling JSON: %v", err)
-		return err
+	// Parse the view
+	if requestData.Get("view") != "" {
+		var view slack.View
+		if err := json.Unmarshal([]byte(requestData.Get("view")), &view); err != nil {
+			log.Printf("Error unmarshaling view: %v", err)
+			return nil
+		}
+		s.View = view
 	}
 
 	return nil

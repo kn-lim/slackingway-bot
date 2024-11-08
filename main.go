@@ -38,6 +38,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	// Slash Command & Interactive Components
 	case "application/x-www-form-urlencoded":
 		if err := slackRequestBody.ParseTimestamp(request.Headers["X-Slack-Request-Timestamp"]); err != nil {
+			log.Printf("Error parsing timestamp: %v", err)
 			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 		}
 
