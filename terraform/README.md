@@ -2,7 +2,7 @@
 
 To use this module, use the following as the source: `github.com/kn-lim/slackingway-bot//terraform`
 
-Make sure to build the `endpoint` and `task` binaries in order for Terraform to create the resources. This will need to be done only when first creating the module.
+Make sure to build the binary, name it `bootstrap` and compress it in a .zip file in order for Terraform to create the resources. This will need to be done only when first applying the module.
 
 <!-- BEGIN_TF_DOCS -->
 ## Example

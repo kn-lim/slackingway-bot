@@ -29,8 +29,9 @@ A personal Slack bot to handle miscellaneous tasks hosted on AWS Lambda.
 
 From the project home directory: 
 
-- **Endpoint Function**: `CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags lambda.norpc -o binary/bootstrap ./cmd/endpoint/`
-- **Task Function**: `CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags lambda.norpc -o binary/bootstrap ./cmd/task/`
+`CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags lambda.norpc -o binary/bootstrap`
+
+Zip the `bootstrap` binary and upload it to the Lambda function.
 
 ## Environment Variables
 
@@ -47,29 +48,23 @@ From the project home directory:
 
 To quickly spin up **slackingway-bot** on AWS, use the [Terraform module](https://github.com/kn-lim/slackingway-bot/tree/main/terraform).
 
-1. Create an **endpoint** Lambda function on AWS. 
+1. Create a Lambda function on AWS. 
     - For the `Runtime`, select `Amazon Linux 2023`.
     - For the `Architecture`, select `x86_64`.
-2. Add an API Gateway triger to the **endpoint** Lambda function.
+2. Add an API Gateway triger to the Lambda function.
     - Use the following settings:
       - **Intent**: Create a new API
       - **API type**: REST API
       - **Security**: Open
-3. Create a **task** Lambda function on AWS. 
-    - For the `Runtime`, select `Amazon Linux 2023`.
-    - For the `Architecture`, select `x86_64`.
-4. Archive the `bootstrap` binary in a .zip file and upload it to the Lambda functions.
-5. In the `Configuration` tab, add in the required environment variables to the Lambda functions.
-6. Give the role the **endpoint** Lambda function is using permission to run the **task** Lambda function.
-7. Give the role the **task** Lambda function is using permission to access the AWS resources it will need.
-8. Change the `Timeout` of the **task** Lambda function to a value greater than 3 seconds.
-    - The `Timeout` of the **endpoint** Lambda function can stay as 3 seconds to follow Slack's requirements.
+3. Archive the `bootstrap` binary in a .zip file and upload it to the Lambda functions.
+4. In the `Configuration` tab, add in the required environment variables to the Lambda functions.
+5. Change the `Timeout` of the Lambda function to a value greater than 3 seconds.
 
 ## Slack Setup
 
 ### Slash Commands
 
-Get the **endpoint** Lambda API Gateway triggers's `API endpoint` and add it to the Slack apps's `Request URL` in each Slack Slash Command in the Slack API page.
+Get the Lambda API Gateway triggers's `API endpoint` and add it to the Slack apps's `Request URL` in each Slack Slash Command in the Slack API page.
 
 ### OAuth & Permissions
 
