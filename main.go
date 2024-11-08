@@ -79,6 +79,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 
 	// Handle the request
 	var message slack.Msg
+	var err error
 	switch s.SlackRequestBody.Type {
 	// Challenge request
 	case "url_verification":
@@ -92,8 +93,12 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	case "slash_command":
 		switch s.SlackRequestBody.Command {
 		case "/ping":
-			err := s.WriteToHistory()
-			if err != nil {
+			if err := s.SendEmptyResponse(); err != nil {
+				log.Printf("Error sending empty response: %v", err)
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
+			}
+
+			if err := s.WriteToHistory(); err != nil {
 				log.Printf("Error writing to history: %v", err)
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
@@ -104,8 +109,12 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
 		case "/delayed-ping":
-			err := s.WriteToHistory()
-			if err != nil {
+			if err := s.SendEmptyResponse(); err != nil {
+				log.Printf("Error sending empty response: %v", err)
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
+			}
+
+			if err := s.WriteToHistory(); err != nil {
 				log.Printf("Error writing to history: %v", err)
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
@@ -116,8 +125,12 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
 		case "/echo":
-			err := slackingway.Echo(s)
-			if err != nil {
+			if err := s.SendEmptyResponse(); err != nil {
+				log.Printf("Error sending empty response: %v", err)
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
+			}
+
+			if err := slackingway.Echo(s); err != nil {
 				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
@@ -154,8 +167,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 
 		switch s.SlackRequestBody.View.CallbackID {
 		case "/echo":
-			err := s.WriteToHistory()
-			if err != nil {
+			if err := s.WriteToHistory(); err != nil {
 				log.Printf("Error writing to history: %v", err)
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}

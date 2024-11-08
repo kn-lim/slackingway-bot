@@ -160,6 +160,20 @@ func (mr *MockSlackingwayMockRecorder) SendBlockMessage(blocks, channelID any) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendBlockMessage", reflect.TypeOf((*MockSlackingway)(nil).SendBlockMessage), blocks, channelID)
 }
 
+// SendEmptyResponse mocks base method.
+func (m *MockSlackingway) SendEmptyResponse() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SendEmptyResponse")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SendEmptyResponse indicates an expected call of SendEmptyResponse.
+func (mr *MockSlackingwayMockRecorder) SendEmptyResponse() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendEmptyResponse", reflect.TypeOf((*MockSlackingway)(nil).SendEmptyResponse))
+}
+
 // SendResponse mocks base method.
 func (m *MockSlackingway) SendResponse(request *http.Request) error {
 	m.ctrl.T.Helper()
