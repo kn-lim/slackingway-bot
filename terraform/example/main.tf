@@ -5,7 +5,7 @@ locals {
   slack_history_channel_id = ""
   slack_oauth_token        = ""
 
-  # These non-empty .zip files are needed only when creating resources.
+  # This non-empty .zip file is needed only when creating resources.
   # Run the build command and zip the binary file.
   # The .zip file an be deleted/moved afterwards.
   filename = "bootstrap.zip"
@@ -18,7 +18,7 @@ module "slackingway-bot" {
   # Required
 
   account_id               = local.account_id
-  filename                 = local.endpoint_filename
+  filename                 = local.filename
   slack_history_channel_id = local.slack_history_channel_id
   slack_oauth_token        = local.slack_oauth_token
   slack_output_channel_id  = local.slack_output_channel_id
