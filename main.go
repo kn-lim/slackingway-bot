@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"net/url"
@@ -16,7 +17,7 @@ import (
 	"github.com/kn-lim/slackingway-bot/internal/utils"
 )
 
-func handler(ctx context.Context, request events.APIGatewayProxyRequest) events.APIGatewayProxyResponse {
+func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	// Set debug mode
 	DEBUG := os.Getenv("DEBUG") == "true"
 
@@ -28,7 +29,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) events.
 
 	// Validate the request
 	if err := slackingway.VerifyRequest(request); err != nil {
-		return events.APIGatewayProxyResponse{StatusCode: http.StatusUnauthorized}
+		return events.APIGatewayProxyResponse{StatusCode: http.StatusUnauthorized}, err
 	}
 
 	// Create a new SlackRequestBody
@@ -37,14 +38,14 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) events.
 	// Slash Command & Interactive Components
 	case "application/x-www-form-urlencoded":
 		if err := slackRequestBody.ParseTimestamp(request.Headers["X-Slack-Request-Timestamp"]); err != nil {
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}
+			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 		}
 
 		// Parse the form data
 		formData, err := url.ParseQuery(request.Body)
 		if err != nil {
 			log.Printf("Error parsing request body: %v", err)
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}
+			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 		}
 
 		// Check for payload
@@ -52,24 +53,24 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) events.
 			// Parse the payload
 			if err := slackRequestBody.ParsePayload(formData.Get("payload")); err != nil {
 				log.Printf("Error parsing payload: %v", err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
 		} else {
 			// Parse the slash command
 			if err := slackRequestBody.ParseSlashCommand(formData); err != nil {
 				log.Printf("Error parsing slash command: %v", err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
 		}
 	// Any other Slack request
 	case "application/json":
 		if err := json.Unmarshal([]byte(request.Body), &slackRequestBody); err != nil {
 			log.Printf("Error parsing request body: %v", err)
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}
+			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 		}
 	default:
 		log.Printf("Unknown content type: %s", request.Headers["Content-Type"])
-		return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}
+		return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}, errors.New("Unknown content type")
 	}
 
 	// Initialize Slackingway
@@ -86,42 +87,42 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) events.
 			Headers:    headers,
 			StatusCode: http.StatusOK,
 			Body:       s.SlackRequestBody.Challenge,
-		}
+		}, nil
 	case "slash_command":
 		switch s.SlackRequestBody.Command {
 		case "/ping":
 			err := s.WriteToHistory()
 			if err != nil {
 				log.Printf("Error writing to history: %v", err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
 
 			message, err = slackingway.Ping()
 			if err != nil {
 				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
 		case "/delayed-ping":
 			err := s.WriteToHistory()
 			if err != nil {
 				log.Printf("Error writing to history: %v", err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
 
 			message, err = slackingway.DelayedPing(s)
 			if err != nil {
 				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
 		case "/echo":
 			err := slackingway.Echo(s)
 			if err != nil {
 				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
 		default:
 			log.Printf("Unknown command: %v", s.SlackRequestBody.Command)
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}
+			return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}, errors.New("Unknown command")
 		}
 	case "view_submission":
 		if DEBUG {
@@ -129,7 +130,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) events.
 			viewString, err := utils.GetStructFields(slackRequestBody.View)
 			if err != nil {
 				log.Printf("Error parsing view: %v", err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
 			log.Printf("Slack View: %v", viewString)
 		}
@@ -139,21 +140,21 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) events.
 			err := s.WriteToHistory()
 			if err != nil {
 				log.Printf("Error writing to history: %v", err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
 
 			message, err = slackingway.ReceivedEcho(s)
 			if err != nil {
 				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
 		default:
 			log.Printf("Unknown CallbackID: %v", s.SlackRequestBody.View.CallbackID)
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}
+			return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}, errors.New("Unknown CallbackID")
 		}
 	default:
 		log.Printf("Unknown request type: %s", s.SlackRequestBody.Type)
-		return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}
+		return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}, errors.New("Unknown request type")
 	}
 
 	// Send the response to Slack if there is a message
@@ -162,13 +163,13 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) events.
 		response, err := s.NewResponse(message)
 		if err != nil {
 			log.Printf("Error creating response: %v", err)
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}
+			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 		}
 
 		// Send the response
 		if err := s.SendResponse(response); err != nil {
 			log.Printf("Error sending response: %v", err)
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}
+			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 		}
 	}
 
@@ -178,7 +179,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) events.
 	return events.APIGatewayProxyResponse{
 		Headers:    headers,
 		StatusCode: http.StatusOK,
-	}
+	}, nil
 }
 
 func main() {
