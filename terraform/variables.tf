@@ -73,3 +73,9 @@ variable "tags" {
     App = "slackingway-bot"
   }
 }
+
+variable "debug" {
+  description = "Enable debug mode"
+  type        = string
+  default     = false
+}

@@ -27,6 +27,7 @@ module "slackingway-bot" {
 
   # Optional
 
+  # debug             = "false" 
   # name              = local.name
   # log_format        = "Text"
   # region            = "us-west-2"
