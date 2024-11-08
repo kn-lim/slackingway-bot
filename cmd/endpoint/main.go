@@ -79,7 +79,8 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 				log.Printf("Error parsing payload: %v", err)
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, nil
 			}
-			slackRequestBody.Command = slackRequestBody.CallbackID
+			slackRequestBody.Command = slackRequestBody.View.CallbackID
+			slackRequestBody.CallbackID = slackRequestBody.View.CallbackID
 
 			// Parse the payload as a map
 			var payloadMap map[string]interface{}

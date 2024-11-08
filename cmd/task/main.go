@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"time"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/slack-go/slack"
@@ -27,11 +26,8 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 
 	// Parse the request
 	var message slack.Msg
-	var updatedModal slack.ModalViewRequest
-	isSlashCommand := false
 	switch slackRequestBody.Type {
 	case "slash_command":
-		isSlashCommand = true
 		switch slackRequestBody.Command {
 		case "/ping":
 			err := s.WriteToHistory()
@@ -68,7 +64,15 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 
 		switch slackRequestBody.View.CallbackID {
 		case "/echo":
-			updatedModal = slackingway.UpdateEchoModal()
+			err := s.WriteToHistory()
+			if err != nil {
+				return err
+			}
+
+			message, err = slackingway.ReceivedEcho(s)
+			if err != nil {
+				return err
+			}
 		default:
 			log.Printf("Unknown CallbackID: %v", slackRequestBody.View.CallbackID)
 			return errors.New("Unknown CallbackID")
@@ -83,24 +87,16 @@ func handler(ctx context.Context, slackRequestBody slackingway.SlackRequestBody)
 		return errors.New("Unknown request type")
 	}
 
-	if isSlashCommand {
-		// Check if message is not empty
-		if message.Text != "" {
-			// Create the response
-			response, err := s.NewResponse(message)
-			if err != nil {
-				return err
-			}
-
-			// Send the response to Slack
-			if err := s.SendResponse(response); err != nil {
-				return err
-			}
-		}
-	} else {
-		_, err = s.APIClient.UpdateView(updatedModal, "", slackRequestBody.View.Hash, slackRequestBody.View.ID)
-		time.Sleep(time.Second * 2) // Delay to see the updated modal
+	// Check if message is not empty
+	if message.Text != "" {
+		// Create the response
+		response, err := s.NewResponse(message)
 		if err != nil {
+			return err
+		}
+
+		// Send the response to Slack
+		if err := s.SendResponse(response); err != nil {
 			return err
 		}
 	}

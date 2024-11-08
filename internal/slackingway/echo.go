@@ -1,6 +1,10 @@
 package slackingway
 
-import "github.com/slack-go/slack"
+import (
+	"fmt"
+
+	"github.com/slack-go/slack"
+)
 
 func Echo(s *SlackingwayWrapper) error {
 	// Generate a new modal
@@ -13,6 +17,18 @@ func Echo(s *SlackingwayWrapper) error {
 	}
 
 	return nil
+}
+
+func ReceivedEcho(s *SlackingwayWrapper) (slack.Msg, error) {
+	// Get State
+	state := s.SlackRequestBody.View.State.Values
+
+	// Get the text from the input block
+	text := state["text"]["text"].Value
+
+	return slack.Msg{
+		Text: fmt.Sprintf("Received Echo: %v", text),
+	}, nil
 }
 
 func GenerateEchoModal() slack.ModalViewRequest {
