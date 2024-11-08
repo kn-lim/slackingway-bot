@@ -26,13 +26,13 @@ variable "slack_oauth_token" {
   sensitive   = true
 }
 
-variable "endpoint_filename" {
-  description = "The filename of the endpoint Lambda function"
+variable "slack_output_channel_id" {
+  description = "Slack channel ID for output"
   type        = string
 }
 
-variable "task_filename" {
-  description = "The filename of the task Lambda function"
+variable "filename" {
+  description = "The filename to upload to the Lambda function"
   type        = string
 }
 
@@ -48,14 +48,8 @@ variable "runtime" {
   default     = "provided.al2023"
 }
 
-variable "endpoint_timeout" {
-  description = "The timeout for the endpoint Lambda function"
-  type        = number
-  default     = 3
-}
-
-variable "task_timeout" {
-  description = "The timeout for the task Lambda function"
+variable "timeout" {
+  description = "The timeout for the Lambda function"
   type        = number
   default     = 300
 }
