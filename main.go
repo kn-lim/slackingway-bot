@@ -159,7 +159,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	}
 
 	// Send the response to Slack if there is a message
-	if message.Text == "" {
+	if message.Text != "" {
 		// Create the response
 		response, err := s.NewResponse(message)
 		if err != nil {
