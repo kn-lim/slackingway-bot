@@ -12,8 +12,9 @@ locals {
   name                     = "slackingway-bot"
   account_id               = ""
   slack_signing_secret     = ""
-  slack_history_channel_id = ""
   slack_oauth_token        = ""
+  slack_history_channel_id = ""
+  slack_output_channel_id  = ""
 
   # This non-empty .zip file is needed only when creating resources.
   # Run the build command and zip the binary file.
@@ -29,10 +30,10 @@ module "slackingway-bot" {
 
   account_id               = local.account_id
   filename                 = local.filename
-  slack_history_channel_id = local.slack_history_channel_id
   slack_oauth_token        = local.slack_oauth_token
-  slack_output_channel_id  = local.slack_output_channel_id
   slack_signing_secret     = local.slack_signing_secret
+  slack_history_channel_id = local.slack_history_channel_id
+  slack_output_channel_id  = local.slack_output_channel_id
 
   # Optional
 
