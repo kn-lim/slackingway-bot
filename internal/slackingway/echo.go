@@ -8,8 +8,8 @@ import (
 )
 
 func Echo(s *SlackingwayWrapper) error {
-	// Generate a new modal
-	modal := GenerateEchoModal()
+	// Create a new modal
+	modal := CreateEchoModal()
 
 	// Open a new modal
 	_, err := s.APIClient.OpenView(s.SlackRequestBody.TriggerID, modal)
@@ -39,19 +39,22 @@ func ReceivedEcho(s *SlackingwayWrapper) (slack.Msg, error) {
 	}, nil
 }
 
-func GenerateEchoModal() slack.ModalViewRequest {
+func CreateEchoModal() slack.ModalViewRequest {
 	// Create a new Slack ModalViewRequest
 	titleText := slack.NewTextBlockObject("plain_text", "Echo", false, false)
 	closeText := slack.NewTextBlockObject("plain_text", "Close", false, false)
 	submitText := slack.NewTextBlockObject("plain_text", "Submit", false, false)
+
 	headerText := slack.NewTextBlockObject("mrkdwn", "Enter the text you want to echo", false, false)
 	headerSection := slack.NewSectionBlock(headerText, nil, nil)
+
 	inputText := slack.NewTextBlockObject("plain_text", "Text", false, false)
 	inputHint := slack.NewTextBlockObject("plain_text", "Enter the text you want to echo", false, false)
 	inputPlaceholder := slack.NewTextBlockObject("plain_text", "Enter text here", false, false)
 	inputElement := slack.NewPlainTextInputBlockElement(inputPlaceholder, "text")
 	inputBlock := slack.NewInputBlock("text", inputText, inputHint, inputElement)
 
+	// Combine all the blocks
 	blocks := slack.Blocks{
 		BlockSet: []slack.Block{
 			headerSection,

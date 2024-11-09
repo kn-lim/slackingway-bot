@@ -43,7 +43,7 @@ func TestEcho(t *testing.T) {
 }
 
 func TestGenerateEchoModal(t *testing.T) {
-	got := slackingway.GenerateEchoModal()
+	got := slackingway.CreateEchoModal()
 
 	// Run test
 	assert.NotNil(t, got)
