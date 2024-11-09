@@ -19,7 +19,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 
 	// Log the request
 	if DEBUG {
-		requestString, err := utils.GetStructFields(request)
+		requestString, err := utils.PrintStructFields(request)
 		if err != nil {
 			log.Printf("Error parsing form data: %v", err)
 			return err
@@ -83,7 +83,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 	case "view_submission":
 		if DEBUG {
 			// Log the view
-			viewString, err := utils.GetStructFields(request.View)
+			viewString, err := utils.PrintStructFields(request.View)
 			if err != nil {
 				log.Printf("Error parsing view: %v", err)
 				return err

@@ -7,8 +7,8 @@ import (
 	"reflect"
 )
 
-// GetStructFields returns a struct as a readable JSON string
-func GetStructFields(s interface{}) (string, error) {
+// PrintStructFields returns a struct as a readable JSON string
+func PrintStructFields(s interface{}) (string, error) {
 	v := reflect.ValueOf(s)
 
 	// Check if the input is a struct
@@ -17,8 +17,8 @@ func GetStructFields(s interface{}) (string, error) {
 		return "", errors.New("provided value is not a struct")
 	}
 
-	// Marshal the struct into a JSON string with indentation
-	jsonData, err := json.MarshalIndent(s, "", "  ")
+	// Marshal the struct into a compact JSON string
+	jsonData, err := json.Marshal(s)
 	if err != nil {
 		log.Printf("Error marshalling struct to JSON: %v", err)
 		return "", err

@@ -104,7 +104,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 
 			// Log the view state
 			if s.Debug {
-				state, err := utils.GetStructFields(s.SlackRequestBody.View.State)
+				state, err := utils.PrintStructFields(s.SlackRequestBody.View.State)
 				if err != nil {
 					log.Printf("Error parsing view state: %v", err)
 					return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
@@ -123,7 +123,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	case "view_submission":
 		if DEBUG {
 			// Log the view
-			viewString, err := utils.GetStructFields(slackRequestBody.View)
+			viewString, err := utils.PrintStructFields(slackRequestBody.View)
 			if err != nil {
 				log.Printf("Error parsing view: %v", err)
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
