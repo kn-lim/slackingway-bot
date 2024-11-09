@@ -26,6 +26,7 @@ func CreateMenuModal() slack.ModalViewRequest {
 
 	// Option 1
 	option1Text := slack.NewTextBlockObject("plain_text", "Option 1", false, false)
+	option1Section := slack.NewSectionBlock(option1Text, nil, nil)
 	option1Options := []*slack.OptionBlockObject{
 		{
 			Text:  slack.NewTextBlockObject("plain_text", "Choice 1", false, false),
@@ -45,6 +46,7 @@ func CreateMenuModal() slack.ModalViewRequest {
 
 	// Option 2
 	option2Text := slack.NewTextBlockObject("plain_text", "Option 2", false, false)
+	option2Section := slack.NewSectionBlock(option2Text, nil, nil)
 	option2Options := []*slack.OptionBlockObject{
 		{
 			Text:  slack.NewTextBlockObject("plain_text", "Choice 1", false, false),
@@ -64,6 +66,7 @@ func CreateMenuModal() slack.ModalViewRequest {
 
 	// Option 3
 	option3Text := slack.NewTextBlockObject("plain_text", "Option 3", false, false)
+	option3Section := slack.NewSectionBlock(option3Text, nil, nil)
 	option3Options := []*slack.OptionBlockObject{
 		{
 			Text:  slack.NewTextBlockObject("plain_text", "Choice 1", false, false),
@@ -86,13 +89,13 @@ func CreateMenuModal() slack.ModalViewRequest {
 		BlockSet: []slack.Block{
 			headerSection,
 			slack.NewDividerBlock(),
-			option1Text,
+			option1Section,
 			slack.NewActionBlock("action_option1", option1Select),
 			slack.NewDividerBlock(),
-			option2Text,
+			option2Section,
 			slack.NewActionBlock("action_option2", option2Select),
 			slack.NewDividerBlock(),
-			option3Text,
+			option3Section,
 			slack.NewActionBlock("action_option3", option3Select),
 		},
 	}
