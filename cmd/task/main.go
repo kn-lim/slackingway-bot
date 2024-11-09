@@ -43,7 +43,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 				return err
 			}
 
-			message, err = slackingway.Ping()
+			message, err = slackingway.DelayedPing(s)
 			if err != nil {
 				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
 				return err
