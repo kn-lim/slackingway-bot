@@ -48,10 +48,3 @@ func TestGenerateEchoModal(t *testing.T) {
 	// Run test
 	assert.NotNil(t, got)
 }
-
-func TestUpdateEchoModal(t *testing.T) {
-	got := slackingway.UpdateEchoModal()
-
-	// Run test
-	assert.NotNil(t, got)
-}
