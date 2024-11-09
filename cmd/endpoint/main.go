@@ -50,6 +50,16 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 
 		// Check for payload
 		if formData.Get("payload") != "" {
+			if DEBUG {
+				// Log the payload
+				payloadString, err := utils.PrintPayloadFields(formData.Get("payload"))
+				if err != nil {
+					log.Printf("Error parsing payload: %v", err)
+					return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
+				}
+				log.Printf("Slack Payload: %v", payloadString)
+			}
+
 			// Parse the payload
 			if err := slackRequestBody.ParsePayload(formData.Get("payload")); err != nil {
 				log.Printf("Error parsing payload: %v", err)
