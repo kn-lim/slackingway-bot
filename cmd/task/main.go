@@ -108,6 +108,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 				log.Printf("Error writing to history: %v", err)
 				return err
 			}
+
 		default:
 			log.Printf("Unknown CallbackID: %v", s.SlackRequestBody.View.CallbackID)
 			return errors.New("Unknown CallbackID")

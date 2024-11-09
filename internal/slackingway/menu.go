@@ -15,6 +15,10 @@ func Menu(s *SlackingwayWrapper) error {
 	return nil
 }
 
+func ReceivedMenu(s *SlackingwayWrapper) (slack.Msg, error) {
+	return slack.Msg{}, nil
+}
+
 func CreateMenuModal() slack.ModalViewRequest {
 	// Create a new Slack ModalViewRequest
 	titleText := slack.NewTextBlockObject("plain_text", "Menu", false, false)

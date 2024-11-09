@@ -101,6 +101,16 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
+
+			// Log the view state
+			if s.Debug {
+				state, err := utils.GetStructFields(s.SlackRequestBody.View.State)
+				if err != nil {
+					log.Printf("Error parsing view state: %v", err)
+					return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
+				}
+				log.Printf("Slack View State: %v", state)
+			}
 		// All other commands
 		default:
 			// Invoke the task function with the SlackRequestBody as the payload
@@ -126,6 +136,9 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			log.Printf("Error invoking task function: %v", err)
 			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 		}
+	// Block Actions
+	case "block_actions":
+		// Do nothing for now
 	default:
 		log.Printf("Unknown request type: %s", s.SlackRequestBody.Type)
 		return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}, errors.New("Unknown request type")
