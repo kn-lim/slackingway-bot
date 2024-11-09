@@ -1,6 +1,7 @@
 package slackingway_test
 
 import (
+	"net/url"
 	"strconv"
 	"testing"
 	"time"
@@ -50,5 +51,47 @@ func TestParsePayload(t *testing.T) {
 		assert.Equal(t, "T123456", s.TeamID)
 		assert.Equal(t, "123456.123456", s.TriggerID)
 		assert.Equal(t, "test_callback_id", s.View.CallbackID)
+	})
+}
+
+func TestParseSlashCommand(t *testing.T) {
+	var s slackingway.SlackRequestBody
+
+	t.Run("Valid values", func(t *testing.T) {
+		requestData := url.Values{}
+		requestData.Set("token", "test-token")
+		requestData.Set("command", "/test-command")
+		requestData.Set("text", "test-text")
+		requestData.Set("response_url", "https://definitely-a-real-slack-response-url.com")
+		requestData.Set("user_id", "U123456")
+		requestData.Set("channel_id", "C123456")
+		requestData.Set("team_id", "T123456")
+		requestData.Set("callback_id", "test-callback-id")
+		requestData.Set("trigger_id", "123456.123456")
+		requestData.Set("view", `{"callback_id": "test-view-callback-id"}`)
+
+		// Call the ParseSlashCommand method
+		err := s.ParseSlashCommand(requestData)
+		assert.Nil(t, err)
+
+		// Verify that the fields are correctly set
+		assert.Equal(t, "slash_command", s.Type)
+		assert.Equal(t, "test-token", s.Token)
+		assert.Equal(t, "/test-command", s.Command)
+		assert.Equal(t, "test-text", s.Text)
+		assert.Equal(t, "https://definitely-a-real-slack-response-url.com", s.ResponseURL)
+		assert.Equal(t, "U123456", s.UserID)
+		assert.Equal(t, "C123456", s.ChannelID)
+		assert.Equal(t, "T123456", s.TeamID)
+		assert.Equal(t, "test-callback-id", s.CallbackID)
+		assert.Equal(t, "123456.123456", s.TriggerID)
+		assert.Equal(t, "test-view-callback-id", s.View.CallbackID)
+	})
+
+	t.Run("Invalid view", func(t *testing.T) {
+		requestData := url.Values{}
+		requestData.Set("view", "invalid-view")
+		err := s.ParseSlashCommand(requestData)
+		assert.NotNil(t, err)
 	})
 }

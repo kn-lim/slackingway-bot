@@ -92,7 +92,7 @@ func (s *SlackRequestBody) ParseSlashCommand(requestData url.Values) error {
 		var view slack.View
 		if err := json.Unmarshal([]byte(requestData.Get("view")), &view); err != nil {
 			log.Printf("Error unmarshaling view: %v", err)
-			return nil
+			return err
 		}
 		s.View = view
 	}
