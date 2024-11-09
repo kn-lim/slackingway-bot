@@ -1,32 +1,28 @@
 package utils
 
 import (
+	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"reflect"
 )
 
+// GetStructFields returns a struct as a readable JSON string
 func GetStructFields(s interface{}) (string, error) {
 	v := reflect.ValueOf(s)
 
 	// Check if the input is a struct
 	if v.Kind() != reflect.Struct {
 		log.Println("Provided value is not a struct.")
-		return "", errors.New("Provided value is not a struct.")
+		return "", errors.New("provided value is not a struct")
 	}
 
-	// Iterate over the struct fields
-	var msg string
-	t := v.Type()
-	for i := 0; i < v.NumField(); i++ {
-		field := t.Field(i)
-		value := v.Field(i)
-		msg += fmt.Sprintf("%s: %v, ", field.Name, value)
+	// Marshal the struct into a JSON string with indentation
+	jsonData, err := json.MarshalIndent(s, "", "  ")
+	if err != nil {
+		log.Printf("Error marshalling struct to JSON: %v", err)
+		return "", err
 	}
 
-	// Delete the last comma and space
-	msg = msg[:len(msg)-2]
-
-	return msg, nil
+	return string(jsonData), nil
 }
