@@ -41,7 +41,7 @@ Zip the `bootstrap` binaries and upload it to the Lambda functions.
 | Name | Description |
 | - | - |
 | `DEBUG` | Enable debug mode |
-| `SLACK_SIGNING_SECRET` | Slack App Signing Secret |
+| `SLACK_SIGNING_SECRET` | Slack App's Signing Secret |
 | `SLACK_OAUTH_TOKEN` | Slack App's OAuth Token |
 | `SLACK_HISTORY_CHANNEL_ID` | Slackingway's History Channel ID |
 | `SLACK_OUTPUT_CHANNEL_ID` | Slackingway's Output Channel ID |
