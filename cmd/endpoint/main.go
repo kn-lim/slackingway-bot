@@ -96,6 +96,11 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
+		case "/menu":
+			if err := slackingway.Menu(s); err != nil {
+				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
+			}
 		// All other commands
 		default:
 			// Invoke the task function with the SlackRequestBody as the payload
