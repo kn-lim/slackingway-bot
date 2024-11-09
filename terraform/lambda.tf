@@ -9,7 +9,6 @@ resource "aws_lambda_function" "endpoint" {
   environment {
     variables = {
       DEBUG                    = var.debug
-      AWS_REGION               = var.region
       SLACK_HISTORY_CHANNEL_ID = var.slack_history_channel_id
       SLACK_OAUTH_TOKEN        = var.slack_oauth_token
       SLACK_OUTPUT_CHANNEL_ID  = var.slack_output_channel_id
