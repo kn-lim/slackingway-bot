@@ -58,6 +58,11 @@ func (s *SlackingwayWrapper) SendEmptyResponse() error {
 	}
 	request.Header.Set("Content-Type", "application/json")
 
+	// Log the empty request
+	if s.Debug {
+		log.Printf("Empty request: %v", request)
+	}
+
 	// Send the empty response
 	response, err := s.HTTPClient.Do(request)
 	if err != nil {
