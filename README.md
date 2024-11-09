@@ -41,7 +41,6 @@ Zip the `bootstrap` binaries and upload it to the Lambda functions.
 | Name | Description |
 | - | - |
 | `DEBUG` | Enable debug mode |
-| `AWS_REGION` | AWS Region of the Lambda Functions | 
 | `SLACK_SIGNING_SECRET` | Slack App Signing Secret |
 | `SLACK_OAUTH_TOKEN` | Slack App's OAuth Token |
 | `SLACK_HISTORY_CHANNEL_ID` | Slackingway's History Channel ID |
