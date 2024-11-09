@@ -14,6 +14,7 @@ import (
 	"github.com/kn-lim/slackingway-bot/internal/slackingway"
 )
 
+// InvokeTaskFunction invokes the task function with the given Slack request
 func InvokeTaskFunction(ctx context.Context, request slackingway.SlackRequestBody) error {
 	// Create a new AWS Lambda client
 	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(os.Getenv("AWS_REGION")))

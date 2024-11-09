@@ -100,7 +100,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	// Slash command
 	case "slash_command":
 		switch s.SlackRequestBody.Command {
-		// Check for commands with modals
+		// Check for slash commands with modals
 		case "/echo":
 			if err := slackingway.Echo(s); err != nil {
 				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
@@ -110,16 +110,6 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			if err := slackingway.Menu(s); err != nil {
 				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
-			}
-
-			// Log the view state
-			if s.Debug {
-				state, err := utils.PrintStructFields(s.SlackRequestBody.View.State)
-				if err != nil {
-					log.Printf("Error parsing view state: %v", err)
-					return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
-				}
-				log.Printf("Slack View State: %v", state)
 			}
 		// All other commands
 		default:
