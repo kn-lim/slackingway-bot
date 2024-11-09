@@ -47,8 +47,11 @@ func NewSlackingway(s *SlackRequestBody) *SlackingwayWrapper {
 
 // SendEmptyResponse sends an empty response to Slack
 func (s *SlackingwayWrapper) SendEmptyResponse() error {
+	// Create the empty JSON body
+	body := bytes.NewBuffer([]byte("{}"))
+
 	// Create the empty request
-	request, err := http.NewRequest("POST", s.SlackRequestBody.ResponseURL, nil)
+	request, err := http.NewRequest("POST", s.SlackRequestBody.ResponseURL, body)
 	if err != nil {
 		log.Printf("Error creating request: %v", err)
 		return err
@@ -68,6 +71,12 @@ func (s *SlackingwayWrapper) SendEmptyResponse() error {
 		log.Printf("Empty response status: %v", response.Status)
 		responseBodyBytes, _ := io.ReadAll(response.Body)
 		log.Printf("Empty response body: %v", string(responseBodyBytes))
+	}
+
+	// Check for non-OK status
+	if response.StatusCode != http.StatusOK {
+		log.Printf("Non-OK HTTP status: %v", response.StatusCode)
+		return err
 	}
 
 	return nil
