@@ -85,7 +85,7 @@ Get the **endpoint** Lambda API Gateway triggers's `API endpoint` and add it to 
 
 #### OAuth Tokens
 
-Save the `Bot User OAuth Token` as the `SLACK_OAUTH_TOKEN` environment variable in the Task Lambda function.
+Save the `Bot User OAuth Token` as the `SLACK_OAUTH_TOKEN` environment variable in the **task** Lambda function.
 
 #### Scopes
 
