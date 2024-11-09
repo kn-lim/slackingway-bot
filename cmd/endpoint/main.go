@@ -11,7 +11,6 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/slack-go/slack"
 
 	"github.com/kn-lim/slackingway-bot/internal/slackingway"
 	"github.com/kn-lim/slackingway-bot/internal/utils"
@@ -78,8 +77,6 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	s := slackingway.NewSlackingway(&slackRequestBody)
 
 	// Handle the request
-	var message slack.Msg
-	var err error
 	switch s.SlackRequestBody.Type {
 	// Challenge request
 	case "url_verification":
@@ -90,70 +87,24 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			StatusCode: http.StatusOK,
 			Body:       s.SlackRequestBody.Challenge,
 		}, nil
+	// Slash command
 	case "slash_command":
 		switch s.SlackRequestBody.Command {
-		case "/ping":
-			if err := s.SendEmptyResponse(); err != nil {
-				log.Printf("Error sending empty response: %v", err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
-			}
-
-			if err := s.WriteToHistory(); err != nil {
-				log.Printf("Error writing to history: %v", err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
-			}
-
-			message, err = slackingway.Ping()
-			if err != nil {
-				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
-			}
-		case "/delayed-ping":
-			if err := s.SendEmptyResponse(); err != nil {
-				log.Printf("Error sending empty response: %v", err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
-			}
-
-			if err := s.WriteToHistory(); err != nil {
-				log.Printf("Error writing to history: %v", err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
-			}
-
-			message, err = slackingway.DelayedPing(s)
-			if err != nil {
-				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
-			}
+		// Check for commands with modals
 		case "/echo":
-			if err := s.SendEmptyResponse(); err != nil {
-				log.Printf("Error sending empty response: %v", err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
-			}
-
 			if err := slackingway.Echo(s); err != nil {
 				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
+		// All other commands
 		default:
-			log.Printf("Unknown command: %v", s.SlackRequestBody.Command)
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}, errors.New("Unknown command")
-		}
-
-		// Send the response to Slack if there is a message
-		if message.Text != "" {
-			// Create the response
-			response, err := s.NewResponse(message)
-			if err != nil {
-				log.Printf("Error creating response: %v", err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
-			}
-
-			// Send the response
-			if err := s.SendResponse(response); err != nil {
-				log.Printf("Error sending response: %v", err)
+			// Invoke the task function with the SlackRequestBody as the payload
+			if err := utils.InvokeTaskFunction(ctx, *s.SlackRequestBody); err != nil {
+				log.Printf("Error invoking task function: %v", err)
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
 		}
+	// Modal submission
 	case "view_submission":
 		if DEBUG {
 			// Log the view
@@ -165,25 +116,9 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			log.Printf("Slack View: %v", viewString)
 		}
 
-		switch s.SlackRequestBody.View.CallbackID {
-		case "/echo":
-			if err := s.WriteToHistory(); err != nil {
-				log.Printf("Error writing to history: %v", err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
-			}
-
-			message, err = slackingway.ReceivedEcho(s)
-			if err != nil {
-				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
-			}
-		default:
-			log.Printf("Unknown CallbackID: %v", s.SlackRequestBody.View.CallbackID)
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}, errors.New("Unknown CallbackID")
-		}
-
-		if err := s.SendTextMessage(message.Text, os.Getenv("SLACK_OUTPUT_CHANNEL_ID")); err != nil {
-			log.Printf("Error sending message: %v", err)
+		// Invoke the task function with the SlackRequestBody as the payload
+		if err := utils.InvokeTaskFunction(ctx, *s.SlackRequestBody); err != nil {
+			log.Printf("Error invoking task function: %v", err)
 			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 		}
 	default:

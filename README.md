@@ -29,43 +29,58 @@ A personal Slack bot to handle miscellaneous tasks hosted on AWS Lambda.
 
 From the project home directory: 
 
-`CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags lambda.norpc -o binary/bootstrap`
+- **Endpoint Function**: `CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags lambda.norpc -o binary/bootstrap ./cmd/endpoint/`
+- **Task Function**: `CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags lambda.norpc -o binary/bootstrap ./cmd/task/`
 
-Zip the `bootstrap` binary and upload it to the Lambda function.
+Zip the `bootstrap` binaries and upload it to the Lambda functions.
 
 ## Environment Variables
 
-### Lambda Function
+### Endpoint Lambda Function
 
 | Name | Description |
 | - | - |
 | `DEBUG` | Enable debug mode |
-| `SLACK_HISTORY_CHANNEL_ID` | Slackingway's History Channel ID |
-| `SLACK_OAUTH_TOKEN` | Slack App's OAuth Token |
-| `SLACK_OUTPUT_CHANNEL_ID` | Slackingway's Output Channel ID |
+| `AWS_REGION` | AWS Region of the Lambda Functions | 
 | `SLACK_SIGNING_SECRET` | Slack App Signing Secret |
+| `SLACK_OAUTH_TOKEN` | Slack App's OAuth Token |
+| `SLACK_HISTORY_CHANNEL_ID` | Slackingway's History Channel ID |
+| `SLACK_OUTPUT_CHANNEL_ID` | Slackingway's Output Channel ID |
+
+### Task Lambda Function
+
+| Name | Description |
+| - | - |
+| `DEBUG` | Enable debug mode |
+| `SLACK_OAUTH_TOKEN` | Slack App's OAuth Token |
+| `SLACK_HISTORY_CHANNEL_ID` | Slackingway's History Channel ID |
+| `SLACK_OUTPUT_CHANNEL_ID` | Slackingway's Output Channel ID |
 
 ## AWS Setup
 
 To quickly spin up **slackingway-bot** on AWS, use the [Terraform module](https://github.com/kn-lim/slackingway-bot/tree/main/terraform).
 
-1. Create a Lambda function on AWS. 
+1. Create the **endpoint** Lambda function on AWS. 
     - For the `Runtime`, select `Amazon Linux 2023`.
     - For the `Architecture`, select `x86_64`.
-2. Add an API Gateway triger to the Lambda function.
+2. Add an API Gateway triger to the **endpoint** Lambda function.
     - Use the following settings:
       - **Intent**: Create a new API
       - **API type**: REST API
       - **Security**: Open
-3. Archive the `bootstrap` binary in a .zip file and upload it to the Lambda functions.
-4. In the `Configuration` tab, add in the required environment variables to the Lambda functions.
-5. Change the `Timeout` of the Lambda function to a value greater than 3 seconds.
+3. Create the **task** Lambda function on AWS. 
+    - For the `Runtime`, select `Amazon Linux 2023`.
+    - For the `Architecture`, select `x86_64`.
+4. Build the **endpoint** and **task** binaries.
+5. Archive the `bootstrap` binaries in .zip files and upload it to the Lambda functions.
+6. In the `Configuration` tab, add in the required environment variables to the Lambda functions.
+7. Change the `Timeout` of the **task** Lambda function to a value greater than 3 seconds.
 
 ## Slack Setup
 
 ### Slash Commands
 
-Get the Lambda API Gateway triggers's `API endpoint` and add it to the Slack apps's `Request URL` in each Slack Slash Command in the Slack API page.
+Get the **endpoint** Lambda API Gateway triggers's `API endpoint` and add it to the Slack apps's `Request URL` in each Slack Slash Command in the Slack API page.
 
 ### OAuth & Permissions
 

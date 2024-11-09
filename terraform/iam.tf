@@ -13,10 +13,36 @@ data "aws_iam_policy_document" "assume_role" {
   }
 }
 
-resource "aws_iam_role" "this" {
-  name               = var.name
+resource "aws_iam_role" "endpoint" {
+  name               = "${var.name}-endpoint"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
   tags               = var.tags
+}
+
+resource "aws_iam_role" "task" {
+  name               = "${var.name}-task"
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
+  tags               = var.tags
+}
+
+resource "aws_iam_role_policy" "invoke" {
+  name = "InvokeTaskLambdaFunction"
+  role = aws_iam_role.endpoint.name
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "lambda:InvokeFunction"
+        ],
+        Resource = [
+          aws_lambda_function.task.arn
+        ]
+      },
+    ],
+  })
 }
 
 # CloudWatch
@@ -42,7 +68,12 @@ resource "aws_iam_policy" "this" {
   policy      = data.aws_iam_policy_document.lambda_logging.json
 }
 
-resource "aws_iam_role_policy_attachment" "this" {
-  role       = aws_iam_role.this.name
+resource "aws_iam_role_policy_attachment" "lambda_logs_endpoint" {
+  role       = aws_iam_role.endpoint.name
+  policy_arn = aws_iam_policy.this.arn
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_logs_task" {
+  role       = aws_iam_role.task.name
   policy_arn = aws_iam_policy.this.arn
 }
