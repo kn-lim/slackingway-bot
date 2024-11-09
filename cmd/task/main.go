@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"os"
+	"time"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/slack-go/slack"
@@ -101,6 +102,13 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 			message, err = slackingway.ReceivedEcho(s)
 			if err != nil {
 				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
+				return err
+			}
+
+			_, err := s.APIClient.UpdateView(slackingway.UpdateEchoModal(), "", s.SlackRequestBody.View.Hash, s.SlackRequestBody.View.ID)
+			time.Sleep(time.Second * 2)
+			if err != nil {
+				log.Printf("Error updating view: %v", err)
 				return err
 			}
 		default:

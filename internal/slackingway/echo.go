@@ -2,6 +2,7 @@ package slackingway
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/slack-go/slack"
 )
@@ -26,8 +27,15 @@ func ReceivedEcho(s *SlackingwayWrapper) (slack.Msg, error) {
 	// Get the text from the input block
 	text := state["text"]["text"].Value
 
+	// Get user information
+	user, err := s.APIClient.GetUserInfo(s.SlackRequestBody.UserID)
+	if err != nil {
+		log.Printf("Error getting user info: %v", err)
+		return slack.Msg{}, err
+	}
+
 	return slack.Msg{
-		Text: fmt.Sprintf("Received Echo: %v", text),
+		Text: fmt.Sprintf("Received Echo from %s: %v", user.RealName, text),
 	}, nil
 }
 
@@ -66,7 +74,7 @@ func UpdateEchoModal() slack.ModalViewRequest {
 	titleText := slack.NewTextBlockObject("plain_text", "Echo", false, false)
 	closeText := slack.NewTextBlockObject("plain_text", "Close", false, false)
 	submitText := slack.NewTextBlockObject("plain_text", "Submit", false, false)
-	headerText := slack.NewTextBlockObject("mrkdwn", "Modal updated!", false, false)
+	headerText := slack.NewTextBlockObject("mrkdwn", "Echo submitted!", false, false)
 	headerSection := slack.NewSectionBlock(headerText, nil, nil)
 
 	blocks := slack.Blocks{
