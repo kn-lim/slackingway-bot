@@ -35,7 +35,7 @@ func ReceivedEcho(s *SlackingwayWrapper) (slack.Msg, error) {
 	}
 
 	return slack.Msg{
-		Text: fmt.Sprintf("Received Echo from %s: %v", user.RealName, text),
+		Text: fmt.Sprintf("Received Echo from %s: `%v`", user.RealName, text),
 	}, nil
 }
 
@@ -56,30 +56,6 @@ func GenerateEchoModal() slack.ModalViewRequest {
 		BlockSet: []slack.Block{
 			headerSection,
 			inputBlock,
-		},
-	}
-
-	return slack.ModalViewRequest{
-		Type:       slack.ViewType("modal"),
-		Title:      titleText,
-		Close:      closeText,
-		Submit:     submitText,
-		Blocks:     blocks,
-		CallbackID: "/echo",
-	}
-}
-
-func UpdateEchoModal() slack.ModalViewRequest {
-	// Create a new Slack ModalViewRequest
-	titleText := slack.NewTextBlockObject("plain_text", "Echo", false, false)
-	closeText := slack.NewTextBlockObject("plain_text", "Close", false, false)
-	submitText := slack.NewTextBlockObject("plain_text", "Submit", false, false)
-	headerText := slack.NewTextBlockObject("mrkdwn", "Echo submitted!", false, false)
-	headerSection := slack.NewSectionBlock(headerText, nil, nil)
-
-	blocks := slack.Blocks{
-		BlockSet: []slack.Block{
-			headerSection,
 		},
 	}
 
