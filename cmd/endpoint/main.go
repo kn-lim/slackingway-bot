@@ -111,7 +111,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			if !slackingway.ValidateAdminRole(s.SlackRequestBody.UserID) {
 				return events.APIGatewayProxyResponse{
 					StatusCode: http.StatusOK,
-					Body:       fmt.Sprintf("You do not have permission to use %s", s.SlackRequestBody.UserID),
+					Body:       fmt.Sprintf("You do not have permission to use %s", s.SlackRequestBody.Command),
 				}, nil
 			}
 
