@@ -5,10 +5,10 @@ output "api_endpoint" {
 
 output "endpoint_function_arn" {
   description = "The ARN of the Endpoint Lambda function"
-  value       = "${aws_lambda_function.endpoint.arn}"
+  value       = aws_lambda_function.endpoint.arn
 }
 
 output "task_function_arn" {
   description = "The ARN of the Task Lambda function"
-  value       = "${aws_lambda_function.task.arn}"
+  value       = aws_lambda_function.task.arn
 }

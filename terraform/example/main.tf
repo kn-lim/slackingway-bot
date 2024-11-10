@@ -1,6 +1,7 @@
 locals {
   name                     = "slackingway-bot"
   account_id               = ""
+  debug                    = "false"
   slack_signing_secret     = ""
   slack_oauth_token        = ""
   slack_history_channel_id = ""
@@ -19,17 +20,27 @@ module "slackingway-bot" {
 
   # Required
 
-  account_id               = local.account_id
-  endpoint_filename        = local.endpoint_filename
-  task_filename            = local.task_filename
-  slack_oauth_token        = local.slack_oauth_token
-  slack_signing_secret     = local.slack_signing_secret
-  slack_history_channel_id = local.slack_history_channel_id
-  slack_output_channel_id  = local.slack_output_channel_id
+  account_id        = local.account_id
+  endpoint_filename = local.endpoint_filename
+  task_filename     = local.task_filename
+  endpoint_environment_variables = {
+    DEBUG                    = local.debug
+    SLACK_HISTORY_CHANNEL_ID = local.slack_history_channel_id
+    SLACK_OAUTH_TOKEN        = local.slack_oauth_token
+    SLACK_OUTPUT_CHANNEL_ID  = local.slack_output_channel_id
+    SLACK_SIGNING_SECRET     = local.slack_signing_secret
+    TASK_FUNCTION_NAME       = "${var.name}-task"
+  }
+  task_environment_variables = {
+    DEBUG                    = local.debug
+    SLACK_HISTORY_CHANNEL_ID = local.slack_history_channel_id
+    SLACK_OAUTH_TOKEN        = local.slack_oauth_token
+    SLACK_OUTPUT_CHANNEL_ID  = local.slack_output_channel_id
+    SLACK_SIGNING_SECRET     = local.slack_signing_secret
+  }
 
   # Optional
 
-  # debug             = "false" 
   # name              = local.name
   # log_format        = "Text"
   # region            = "us-west-2"

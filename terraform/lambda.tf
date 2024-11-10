@@ -7,14 +7,7 @@ resource "aws_lambda_function" "endpoint" {
   timeout       = var.endpoint_timeout
 
   environment {
-    variables = {
-      DEBUG                    = var.debug
-      SLACK_HISTORY_CHANNEL_ID = var.slack_history_channel_id
-      SLACK_OAUTH_TOKEN        = var.slack_oauth_token
-      SLACK_OUTPUT_CHANNEL_ID  = var.slack_output_channel_id
-      SLACK_SIGNING_SECRET     = var.slack_signing_secret
-      TASK_FUNCTION_NAME       = "${var.name}-task"
-    }
+    variables = var.endpoint_environment_variables
   }
 
   logging_config {
@@ -36,13 +29,7 @@ resource "aws_lambda_function" "task" {
   timeout       = var.task_timeout
 
   environment {
-    variables = {
-      DEBUG                    = var.debug
-      SLACK_HISTORY_CHANNEL_ID = var.slack_history_channel_id
-      SLACK_OAUTH_TOKEN        = var.slack_oauth_token
-      SLACK_OUTPUT_CHANNEL_ID  = var.slack_output_channel_id
-      SLACK_SIGNING_SECRET     = var.slack_signing_secret
-    }
+    variables = var.task_environment_variables
   }
 
   logging_config {

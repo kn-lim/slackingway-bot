@@ -77,16 +77,22 @@ variable "retention_in_days" {
   default     = 3
 }
 
+variable "endpoint_environment_variables" {
+  description = "A map of environment variables to apply to the Endpoint Lambda function"
+  type        = map(string)
+  sensitive   = true
+}
+
+variable "task_environment_variables" {
+  description = "A map of environment variables to apply to the Task Lambda function"
+  type        = map(string)
+  sensitive   = true
+}
+
 variable "tags" {
   description = "A map of tags to apply to the resources"
   type        = map(string)
   default = {
     App = "slackingway-bot"
   }
-}
-
-variable "debug" {
-  description = "Enable debug mode"
-  type        = string
-  default     = false
 }
