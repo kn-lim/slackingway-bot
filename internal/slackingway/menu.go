@@ -26,8 +26,17 @@ func ReceivedMenu(s *SlackingwayWrapper) (slack.Msg, error) {
 
 	// Get the selected options
 	option1 := state["action_option1"]["menu_option1"].SelectedOption.Value
+	if option1 == "" {
+		option1 = "N/A"
+	}
 	option2 := state["action_option2"]["menu_option2"].SelectedOption.Value
+	if option2 == "" {
+		option2 = "N/A"
+	}
 	option3 := state["action_option3"]["menu_option3"].SelectedOption.Value
+	if option3 == "" {
+		option3 = "N/A"
+	}
 
 	// Get user information
 	user, err := s.APIClient.GetUserInfo(s.SlackRequestBody.UserID)
