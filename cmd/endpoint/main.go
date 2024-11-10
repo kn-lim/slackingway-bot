@@ -110,9 +110,9 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		case "/menu":
 			if !slackingway.ValidateAdminRole(s.SlackRequestBody.UserID) {
 				return events.APIGatewayProxyResponse{
-					StatusCode: http.StatusUnauthorized,
+					StatusCode: http.StatusOK,
 					Body:       fmt.Sprintf("You do not have permission to use %s", s.SlackRequestBody.UserID),
-				}, errors.New("Unauthorized")
+				}, nil
 			}
 
 			if err := slackingway.Menu(s); err != nil {
