@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -18,8 +19,8 @@ const (
 	TimeAllowance = 30 * time.Second
 )
 
-// VerifyRequest verifies the request from Slack
-func VerifyRequest(request events.APIGatewayProxyRequest) error {
+// ValidateRequest verifies the request from Slack
+func ValidateRequest(request events.APIGatewayProxyRequest) error {
 	// Check timing
 	timestampInt, err := strconv.ParseInt(request.Headers["X-Slack-Request-Timestamp"], 10, 64)
 	if err != nil {
@@ -42,4 +43,20 @@ func VerifyRequest(request events.APIGatewayProxyRequest) error {
 	}
 
 	return nil
+}
+
+// ValidateAdminRole checks if the user has the admin role
+func ValidateAdminRole(userID string) bool {
+	if os.Getenv("ADMIN_ROLE_USERS") == "" {
+		return false
+	}
+
+	// Check if the user has the admin role
+	adminRoleUsers := strings.Split(os.Getenv("ADMIN_ROLE_USERS"), ",")
+	for _, user := range adminRoleUsers {
+		if user == userID {
+			return true
+		}
+	}
+	return false
 }

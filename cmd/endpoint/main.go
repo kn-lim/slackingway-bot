@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -27,7 +28,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	}
 
 	// Validate the request
-	if err := slackingway.VerifyRequest(request); err != nil {
+	if err := slackingway.ValidateRequest(request); err != nil {
 		return events.APIGatewayProxyResponse{StatusCode: http.StatusUnauthorized}, err
 	}
 
@@ -107,6 +108,13 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
 		case "/menu":
+			if !slackingway.ValidateAdminRole(s.SlackRequestBody.UserID) {
+				return events.APIGatewayProxyResponse{
+					StatusCode: http.StatusUnauthorized,
+					Body:       fmt.Sprintf("You do not have permission to use %s", s.SlackRequestBody.UserID),
+				}, errors.New("Unauthorized")
+			}
+
 			if err := slackingway.Menu(s); err != nil {
 				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err

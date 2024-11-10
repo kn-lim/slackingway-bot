@@ -16,7 +16,7 @@ import (
 	"github.com/kn-lim/slackingway-bot/internal/slackingway"
 )
 
-func TestVerifyRequest(t *testing.T) {
+func TestValidateRequest(t *testing.T) {
 	// Set up environment variables
 	os.Setenv("SLACK_SIGNING_SECRET", "test-slack-signing-secret")
 
@@ -36,5 +36,19 @@ func TestVerifyRequest(t *testing.T) {
 		Body: body,
 	}
 
-	assert.Nil(t, slackingway.VerifyRequest(request))
+	assert.Nil(t, slackingway.ValidateRequest(request))
+}
+
+func TestValidateAdminRole(t *testing.T) {
+	t.Run("Empty admin role users", func(t *testing.T) {
+		os.Setenv("ADMIN_ROLE_USERS", "")
+		assert.False(t, slackingway.ValidateAdminRole("test-user1"))
+	})
+
+	t.Run("Valid admin role users", func(t *testing.T) {
+		os.Setenv("ADMIN_ROLE_USERS", "test-user1,test-user2")
+		assert.True(t, slackingway.ValidateAdminRole("test-user1"))
+		assert.True(t, slackingway.ValidateAdminRole("test-user2"))
+		assert.False(t, slackingway.ValidateAdminRole("test-user3"))
+	})
 }
