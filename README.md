@@ -54,6 +54,7 @@ Zip the `bootstrap` binaries and upload it to the Lambda functions.
 | `SLACK_OAUTH_TOKEN` | Slack App's OAuth Token |
 | `SLACK_HISTORY_CHANNEL_ID` | Slackingway's History Channel ID |
 | `SLACK_OUTPUT_CHANNEL_ID` | Slackingway's Output Channel ID |
+| `ADMIN_ROLE_USERS` | Comma-delimited string of Slack User IDs with admin roles |
 
 ### Task Lambda Function
 
