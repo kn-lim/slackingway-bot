@@ -25,6 +25,15 @@ A personal Slack bot to handle miscellaneous tasks hosted on AWS Lambda.
 
 # Using the Slack Bot
 
+## Slack Slash Commands
+
+| Command | Description |
+| - | - |
+| `/delayed-ping` | Ping with a delay |
+| `/echo` | Opens a Slack modal to echo a text to the output channel |
+| `/menu` | Opens a Slack modal to select choices from options and sends the result to the output channel |
+| `/ping` | Ping |
+
 ## How to Build
 
 From the project home directory: 
@@ -98,12 +107,3 @@ Enable the following `Bot Token Scopes`:
 - `im:history`
 - `users.profile:read`
 - `users:read`
-
-## Slack Slash Commands
-
-| Command | Description |
-| - | - |
-| `/delayed-ping` | Ping with a delay |
-| `/echo` | Opens a Slack modal to echo a text to the output channel |
-| `/menu` | Opens a Slack modal to select choices from options and sends the result to the output channel |
-| `/ping` | Ping |
