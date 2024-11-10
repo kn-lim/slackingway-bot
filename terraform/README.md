@@ -16,6 +16,7 @@ locals {
   slack_oauth_token        = ""
   slack_history_channel_id = ""
   slack_output_channel_id  = ""
+  admin_role_users         = ""
 
   # These non-empty .zip files are needed only when creating resources.
   # Run the build commands and zip the binary files.
@@ -34,6 +35,7 @@ module "slackingway-bot" {
   endpoint_filename = local.endpoint_filename
   task_filename     = local.task_filename
   endpoint_environment_variables = {
+    ADMIN_ROLE_USERS         = local.admin_role_users
     DEBUG                    = local.debug
     SLACK_HISTORY_CHANNEL_ID = local.slack_history_channel_id
     SLACK_OAUTH_TOKEN        = local.slack_oauth_token
