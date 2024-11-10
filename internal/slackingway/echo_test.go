@@ -42,6 +42,52 @@ func TestEcho(t *testing.T) {
 	})
 }
 
+func TestReceivedEcho(t *testing.T) {
+	// Create a new mock controller
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	testView := slack.View{
+		State: &slack.ViewState{
+			Values: map[string]map[string]slack.BlockAction{},
+		},
+	}
+
+	t.Run("Error on GetUserInfo", func(t *testing.T) {
+		MockSlackAPIClient := NewMockSlackAPIClient(ctrl)
+		MockSlackAPIClient.EXPECT().GetUserInfo(gomock.Any()).Return(&slack.User{}, errors.New("error!!!"))
+
+		s := &slackingway.SlackingwayWrapper{
+			APIClient: MockSlackAPIClient,
+			SlackRequestBody: &slackingway.SlackRequestBody{
+				UserID: "definitely_a_invalid_user_id",
+				View:   testView,
+			},
+		}
+		msg, err := slackingway.ReceivedMenu(s)
+
+		assert.NotNil(t, err)
+		assert.Empty(t, msg)
+	})
+
+	t.Run("Successful ReceivedEcho", func(t *testing.T) {
+		MockSlackAPIClient := NewMockSlackAPIClient(ctrl)
+		MockSlackAPIClient.EXPECT().GetUserInfo(gomock.Any()).Return(&slack.User{}, nil)
+
+		s := &slackingway.SlackingwayWrapper{
+			APIClient: MockSlackAPIClient,
+			SlackRequestBody: &slackingway.SlackRequestBody{
+				UserID: "definitely_a_valid_user_id",
+				View:   testView,
+			},
+		}
+		msg, err := slackingway.ReceivedEcho(s)
+
+		assert.Nil(t, err)
+		assert.NotEmpty(t, msg)
+	})
+}
+
 func TestGenerateEchoModal(t *testing.T) {
 	got := slackingway.CreateEchoModal()
 

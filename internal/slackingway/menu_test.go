@@ -61,7 +61,7 @@ func TestReceivedMenu(t *testing.T) {
 		s := &slackingway.SlackingwayWrapper{
 			APIClient: MockSlackAPIClient,
 			SlackRequestBody: &slackingway.SlackRequestBody{
-				UserID: "definitely_a_valid_user_id",
+				UserID: "definitely_a_invalid_user_id",
 				View:   testView,
 			},
 		}
