@@ -11,6 +11,7 @@ Make sure to build the binaries, name it `bootstrap` and compress them into .zip
 locals {
   name                     = "slackingway-bot"
   account_id               = ""
+  debug                    = "false"
   slack_signing_secret     = ""
   slack_oauth_token        = ""
   slack_history_channel_id = ""
@@ -29,17 +30,27 @@ module "slackingway-bot" {
 
   # Required
 
-  account_id               = local.account_id
-  endpoint_filename        = local.endpoint_filename
-  task_filename            = local.task_filename
-  slack_oauth_token        = local.slack_oauth_token
-  slack_signing_secret     = local.slack_signing_secret
-  slack_history_channel_id = local.slack_history_channel_id
-  slack_output_channel_id  = local.slack_output_channel_id
+  account_id        = local.account_id
+  endpoint_filename = local.endpoint_filename
+  task_filename     = local.task_filename
+  endpoint_environment_variables = {
+    DEBUG                    = local.debug
+    SLACK_HISTORY_CHANNEL_ID = local.slack_history_channel_id
+    SLACK_OAUTH_TOKEN        = local.slack_oauth_token
+    SLACK_OUTPUT_CHANNEL_ID  = local.slack_output_channel_id
+    SLACK_SIGNING_SECRET     = local.slack_signing_secret
+    TASK_FUNCTION_NAME       = "${var.name}-task"
+  }
+  task_environment_variables = {
+    DEBUG                    = local.debug
+    SLACK_HISTORY_CHANNEL_ID = local.slack_history_channel_id
+    SLACK_OAUTH_TOKEN        = local.slack_oauth_token
+    SLACK_OUTPUT_CHANNEL_ID  = local.slack_output_channel_id
+    SLACK_SIGNING_SECRET     = local.slack_signing_secret
+  }
 
   # Optional
 
-  # debug             = "false" 
   # name              = local.name
   # log_format        = "Text"
   # region            = "us-west-2"
@@ -99,7 +110,7 @@ output "api_endpoint" {
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_account_id"></a> [account\_id](#input\_account\_id) | The AWS account ID | `string` | n/a | yes |
-| <a name="input_debug"></a> [debug](#input\_debug) | Enable debug mode | `string` | `false` | no |
+| <a name="input_endpoint_environment_variables"></a> [endpoint\_environment\_variables](#input\_endpoint\_environment\_variables) | A map of environment variables to apply to the Endpoint Lambda function | `map(string)` | n/a | yes |
 | <a name="input_endpoint_filename"></a> [endpoint\_filename](#input\_endpoint\_filename) | The filename to upload to the Endpoint Lambda function | `string` | n/a | yes |
 | <a name="input_endpoint_timeout"></a> [endpoint\_timeout](#input\_endpoint\_timeout) | The timeout for the Endpoint Lambda function | `number` | `3` | no |
 | <a name="input_log_format"></a> [log\_format](#input\_log\_format) | The log format for the CloudWatch logs | `string` | `"Text"` | no |
@@ -112,6 +123,7 @@ output "api_endpoint" {
 | <a name="input_slack_output_channel_id"></a> [slack\_output\_channel\_id](#input\_slack\_output\_channel\_id) | Slack channel ID for output | `string` | n/a | yes |
 | <a name="input_slack_signing_secret"></a> [slack\_signing\_secret](#input\_slack\_signing\_secret) | Slack app signing secret | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to apply to the resources | `map(string)` | <pre>{<br/>  "App": "slackingway-bot"<br/>}</pre> | no |
+| <a name="input_task_environment_variables"></a> [task\_environment\_variables](#input\_task\_environment\_variables) | A map of environment variables to apply to the Task Lambda function | `map(string)` | n/a | yes |
 | <a name="input_task_filename"></a> [task\_filename](#input\_task\_filename) | The filename to upload to the Task Lambda function | `string` | n/a | yes |
 | <a name="input_task_timeout"></a> [task\_timeout](#input\_task\_timeout) | The timeout for the Task Lambda function | `number` | `300` | no |
 
