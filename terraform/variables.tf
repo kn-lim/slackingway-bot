@@ -9,28 +9,6 @@ variable "account_id" {
   type        = string
 }
 
-variable "slack_signing_secret" {
-  description = "Slack app signing secret"
-  type        = string
-  sensitive   = true
-}
-
-variable "slack_history_channel_id" {
-  description = "Slack channel ID for history"
-  type        = string
-}
-
-variable "slack_oauth_token" {
-  description = "Slack app OAuth token"
-  type        = string
-  sensitive   = true
-}
-
-variable "slack_output_channel_id" {
-  description = "Slack channel ID for output"
-  type        = string
-}
-
 variable "endpoint_filename" {
   description = "The filename to upload to the Endpoint Lambda function"
   type        = string
