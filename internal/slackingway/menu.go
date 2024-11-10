@@ -1,6 +1,11 @@
 package slackingway
 
-import "github.com/slack-go/slack"
+import (
+	"fmt"
+	"log"
+
+	"github.com/slack-go/slack"
+)
 
 func Menu(s *SlackingwayWrapper) error {
 	// Create a new modal
@@ -16,7 +21,24 @@ func Menu(s *SlackingwayWrapper) error {
 }
 
 func ReceivedMenu(s *SlackingwayWrapper) (slack.Msg, error) {
-	return slack.Msg{}, nil
+	// Get State
+	state := s.SlackRequestBody.View.State.Values
+
+	// Get the selected options
+	option1 := state["action_option1"]["menu_option1"].SelectedOption.Value
+	option2 := state["action_option2"]["menu_option2"].SelectedOption.Value
+	option3 := state["action_option3"]["menu_option3"].SelectedOption.Value
+
+	// Get user information
+	user, err := s.APIClient.GetUserInfo(s.SlackRequestBody.UserID)
+	if err != nil {
+		log.Printf("Error getting user info: %v", err)
+		return slack.Msg{}, err
+	}
+
+	return slack.Msg{
+		Text: fmt.Sprintf("Received Menu Selection from %s:\nOption 1: `%s`\nOption 2: `%s`\n`Option 3: `%s``", user.RealName, option1, option2, option3),
+	}, nil
 }
 
 func CreateMenuModal() slack.ModalViewRequest {

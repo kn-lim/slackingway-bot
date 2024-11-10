@@ -81,16 +81,6 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 		}
 	// Modal Submission
 	case "view_submission":
-		if DEBUG {
-			// Log the view
-			viewString, err := utils.PrintStructFields(request.View)
-			if err != nil {
-				log.Printf("Error parsing view: %v", err)
-				return err
-			}
-			log.Printf("Slack View: %v", viewString)
-		}
-
 		switch s.SlackRequestBody.View.CallbackID {
 		case "/echo":
 			if err := s.WriteToHistory(); err != nil {
@@ -109,14 +99,22 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 				return err
 			}
 
+			message, err = slackingway.ReceivedMenu(s)
+			if err != nil {
+				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
+				return err
+			}
 		default:
 			log.Printf("Unknown CallbackID: %v", s.SlackRequestBody.View.CallbackID)
 			return errors.New("Unknown CallbackID")
 		}
 
-		if err := s.SendTextMessage(message.Text, os.Getenv("SLACK_OUTPUT_CHANNEL_ID")); err != nil {
-			log.Printf("Error sending message: %v", err)
-			return err
+		// Send the response to Slack if there is a message
+		if message.Text != "" {
+			if err := s.SendTextMessage(message.Text, os.Getenv("SLACK_OUTPUT_CHANNEL_ID")); err != nil {
+				log.Printf("Error sending message: %v", err)
+				return err
+			}
 		}
 	default:
 		log.Printf("Unknown request type: %v", request.Type)
