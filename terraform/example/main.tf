@@ -29,7 +29,7 @@ module "slackingway-bot" {
     SLACK_OAUTH_TOKEN        = local.slack_oauth_token
     SLACK_OUTPUT_CHANNEL_ID  = local.slack_output_channel_id
     SLACK_SIGNING_SECRET     = local.slack_signing_secret
-    TASK_FUNCTION_NAME       = "${var.name}-task"
+    TASK_FUNCTION_NAME       = "${local.name}-task"
   }
   task_environment_variables = {
     DEBUG                    = local.debug
