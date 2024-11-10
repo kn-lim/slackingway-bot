@@ -37,7 +37,7 @@ func ReceivedMenu(s *SlackingwayWrapper) (slack.Msg, error) {
 	}
 
 	return slack.Msg{
-		Text: fmt.Sprintf("Received Menu Selection from %s:\nOption 1: `%s`\nOption 2: `%s`\n`Option 3: `%s``", user.RealName, option1, option2, option3),
+		Text: fmt.Sprintf("Received Menu Selection from %s:\nOption 1: `%s`\nOption 2: `%s`\nOption 3: `%s`", user.RealName, option1, option2, option3),
 	}, nil
 }
 
