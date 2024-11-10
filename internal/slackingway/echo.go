@@ -34,9 +34,18 @@ func ReceivedEcho(s *SlackingwayWrapper) (slack.Msg, error) {
 		return slack.Msg{}, err
 	}
 
-	return slack.Msg{
-		Text: fmt.Sprintf("Received Echo from %s: `%v`", user.RealName, text),
-	}, nil
+	var message slack.Msg
+	if text == "" {
+		message = slack.Msg{
+			Text: fmt.Sprintf("Received an empty echo from %s", user.RealName),
+		}
+	} else {
+		message = slack.Msg{
+			Text: fmt.Sprintf("Received Echo from %s: `%v`", user.RealName, text),
+		}
+	}
+
+	return message, nil
 }
 
 func CreateEchoModal() slack.ModalViewRequest {
