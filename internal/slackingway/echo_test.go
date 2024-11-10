@@ -64,7 +64,7 @@ func TestReceivedEcho(t *testing.T) {
 				View:   testView,
 			},
 		}
-		msg, err := slackingway.ReceivedMenu(s)
+		msg, err := slackingway.ReceivedEcho(s)
 
 		assert.NotNil(t, err)
 		assert.Empty(t, msg)
