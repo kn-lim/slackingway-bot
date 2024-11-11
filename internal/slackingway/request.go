@@ -63,12 +63,12 @@ func (s *SlackRequestBody) ParsePayload(payload string) error {
 	user, ok := payloadMap["user"].(map[string]interface{})
 	if !ok {
 		log.Println("User field not found")
-		return errors.New("User field not found")
+		return errors.New("user field not found")
 	}
 	userID, ok := user["id"].(string)
 	if !ok {
 		log.Println("User ID field not found")
-		return errors.New("User ID field not found")
+		return errors.New("user id field not found")
 	}
 	s.UserID = userID
 

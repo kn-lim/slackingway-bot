@@ -91,7 +91,7 @@ func (s *SlackingwayWrapper) SendResponse(request *http.Request) error {
 	return nil
 }
 
-// WriteToHistory writes a message to Slackingway's History channel
+// WriteToHistory writes a message to Slackingway's history channel
 func (s *SlackingwayWrapper) WriteToHistory() error {
 	// Check if APIClient is nil
 	if s.APIClient == nil {
@@ -106,18 +106,14 @@ func (s *SlackingwayWrapper) WriteToHistory() error {
 		return err
 	}
 
-	// Post a message to the History channel
+	// Post a message to the history channel
 	full_command := s.SlackRequestBody.Command
 	if s.SlackRequestBody.Text != "" {
 		full_command += " " + s.SlackRequestBody.Text
 	}
 	msg := fmt.Sprintf("%s executed command `%s` on %s", user.RealName, full_command, s.SlackRequestBody.Timestamp)
-	_, _, err = s.APIClient.PostMessage(
-		os.Getenv("SLACK_HISTORY_CHANNEL_ID"),
-		slack.MsgOptionText(msg, false),
-	)
-	if err != nil {
-		log.Printf("Error posting message: %v", err)
+	if err = s.SendTextMessage(msg, os.Getenv("SLACK_HISTORY_CHANNEL")); err != nil {
+		log.Printf("Error writing to history: %v", err)
 		return err
 	}
 

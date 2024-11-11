@@ -81,7 +81,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		}
 	default:
 		log.Printf("Unknown content type: %s", request.Headers["Content-Type"])
-		return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}, errors.New("Unknown content type")
+		return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}, errors.New("unknown content type")
 	}
 
 	// Initialize Slackingway
@@ -108,7 +108,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			}
 		default:
 			log.Printf("Unknown event type: %s", s.SlackRequestBody.Event.Type)
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}, errors.New("Unknown event type")
+			return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}, errors.New("unknown event type")
 		}
 	// Slash command
 	case "slash_command":
@@ -151,7 +151,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		// Do nothing for now
 	default:
 		log.Printf("Unknown request type: %s", s.SlackRequestBody.Type)
-		return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}, errors.New("Unknown request type")
+		return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}, errors.New("unknown request type")
 	}
 
 	// Return an empty response

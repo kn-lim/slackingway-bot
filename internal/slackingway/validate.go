@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -29,7 +30,7 @@ func ValidateRequest(request events.APIGatewayProxyRequest) error {
 	}
 	if float64(time.Now().Unix())-float64(timestampInt) > TimeAllowance.Seconds() {
 		log.Printf("Timestamp is too old")
-		return fmt.Errorf("Timestamp is too old")
+		return errors.New("timestamp is too old")
 	}
 
 	// Check signature
@@ -39,7 +40,7 @@ func ValidateRequest(request events.APIGatewayProxyRequest) error {
 	signature := SlackVersion + "=" + hex.EncodeToString(h.Sum(nil))
 	if request.Headers["X-Slack-Signature"] != signature {
 		log.Printf("Invalid signature")
-		return fmt.Errorf("Invalid signature")
+		return errors.New("invalid signature")
 	}
 
 	return nil

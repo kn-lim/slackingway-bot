@@ -62,7 +62,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 			}
 		default:
 			log.Printf("Unknown command: %v", request.Command)
-			return errors.New("Unknown command")
+			return errors.New("unknown command")
 		}
 
 		// Send the response to Slack if there is a message
@@ -107,7 +107,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 			}
 		default:
 			log.Printf("Unknown CallbackID: %v", s.SlackRequestBody.View.CallbackID)
-			return errors.New("Unknown CallbackID")
+			return errors.New("unknown CallbackID")
 		}
 
 		// Send the response to Slack if there is a message
@@ -124,7 +124,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 		}
 	default:
 		log.Printf("Unknown request type: %v", request.Type)
-		return errors.New("Unknown request type")
+		return errors.New("unknown request type")
 	}
 
 	return nil
