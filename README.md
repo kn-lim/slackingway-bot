@@ -108,3 +108,15 @@ Enable the following `Bot Token Scopes`:
 - `im:history`
 - `users.profile:read`
 - `users:read`
+
+### Event Subscriptions
+
+#### Enable Events
+
+Get the **endpoint** Lambda API Gateway triggers's `API endpoint` and add it to the Slack apps's `Request URL`. It should be verified after a second.
+
+#### Subscribe to Bot Events
+
+Add the following bot user events:
+
+- `app_home_opened`
