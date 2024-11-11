@@ -98,6 +98,11 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			StatusCode: http.StatusOK,
 			Body:       s.SlackRequestBody.Challenge,
 		}, nil
+	// Home tab
+	case "app_home_opened":
+		if DEBUG {
+			log.Printf("App Home Opened: %v", s.SlackRequestBody)
+		}
 	// Slash command
 	case "slash_command":
 		switch s.SlackRequestBody.Command {
