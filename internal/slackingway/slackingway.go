@@ -3,6 +3,7 @@ package slackingway
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -96,7 +97,7 @@ func (s *SlackingwayWrapper) WriteToHistory() error {
 	// Check if APIClient is nil
 	if s.APIClient == nil {
 		log.Printf("APIClient is nil")
-		return fmt.Errorf("APIClient is nil")
+		return errors.New("APIClient is nil")
 	}
 
 	// Get user information
@@ -112,7 +113,7 @@ func (s *SlackingwayWrapper) WriteToHistory() error {
 		full_command += " " + s.SlackRequestBody.Text
 	}
 	msg := fmt.Sprintf("%s executed command `%s` on %s", user.RealName, full_command, s.SlackRequestBody.Timestamp)
-	if err = s.SendTextMessage(msg, os.Getenv("SLACK_HISTORY_CHANNEL")); err != nil {
+	if err = s.SendTextMessage(msg, os.Getenv("SLACK_HISTORY_CHANNEL_ID")); err != nil {
 		log.Printf("Error writing to history: %v", err)
 		return err
 	}
