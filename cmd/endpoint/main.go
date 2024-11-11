@@ -129,16 +129,6 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		}
 	// Modal submission
 	case "view_submission":
-		if DEBUG {
-			// Log the view
-			viewString, err := utils.PrintStructFields(slackRequestBody.View)
-			if err != nil {
-				log.Printf("Error parsing view: %v", err)
-				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
-			}
-			log.Printf("Slack View: %v", viewString)
-		}
-
 		// Invoke the task function with the SlackRequestBody as the payload
 		if err := utils.InvokeTaskFunction(ctx, *s.SlackRequestBody); err != nil {
 			log.Printf("Error invoking task function: %v", err)
