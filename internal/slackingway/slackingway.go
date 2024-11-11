@@ -17,6 +17,7 @@ type SlackAPIClient interface {
 	PostMessage(channelID string, options ...slack.MsgOption) (string, string, error)
 	OpenView(triggerID string, view slack.ModalViewRequest) (*slack.ViewResponse, error)
 	UpdateView(view slack.ModalViewRequest, externalID string, hash string, viewID string) (*slack.ViewResponse, error)
+	PublishView(userID string, view slack.HomeTabViewRequest, hash string) (*slack.ViewResponse, error)
 }
 
 type Slackingway interface {

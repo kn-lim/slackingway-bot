@@ -92,6 +92,21 @@ func (mr *MockSlackAPIClientMockRecorder) PostMessage(channelID any, options ...
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostMessage", reflect.TypeOf((*MockSlackAPIClient)(nil).PostMessage), varargs...)
 }
 
+// PublishView mocks base method.
+func (m *MockSlackAPIClient) PublishView(userID string, view slack.HomeTabViewRequest, hash string) (*slack.ViewResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PublishView", userID, view, hash)
+	ret0, _ := ret[0].(*slack.ViewResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// PublishView indicates an expected call of PublishView.
+func (mr *MockSlackAPIClientMockRecorder) PublishView(userID, view, hash any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PublishView", reflect.TypeOf((*MockSlackAPIClient)(nil).PublishView), userID, view, hash)
+}
+
 // UpdateView mocks base method.
 func (m *MockSlackAPIClient) UpdateView(view slack.ModalViewRequest, externalID, hash, viewID string) (*slack.ViewResponse, error) {
 	m.ctrl.T.Helper()

@@ -26,6 +26,7 @@ type SlackRequestBody struct {
 	CallbackID  string     `json:"callback_id"`
 	TriggerID   string     `json:"trigger_id"`
 	View        slack.View `json:"view"`
+	Event       SlackEvent `json:"event"`
 }
 
 // ParseTimestamp parses the timestamp from Slack

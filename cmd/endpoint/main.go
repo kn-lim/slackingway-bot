@@ -98,10 +98,17 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			StatusCode: http.StatusOK,
 			Body:       s.SlackRequestBody.Challenge,
 		}, nil
-	// Home tab
-	case "app_home_opened":
-		if DEBUG {
-			log.Printf("App Home Opened: %v", s.SlackRequestBody)
+	// Events
+	case "event_callback":
+		switch s.SlackRequestBody.Event.Type {
+		case "app_home_opened":
+			if err := slackingway.HomeTab(s, s.SlackRequestBody.Event.User); err != nil {
+				log.Printf("Error with %s: %v", s.SlackRequestBody.Event.Type, err)
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
+			}
+		default:
+			log.Printf("Unknown event type: %s", s.SlackRequestBody.Event.Type)
+			return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest}, errors.New("Unknown event type")
 		}
 	// Slash command
 	case "slash_command":
