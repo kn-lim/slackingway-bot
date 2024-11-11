@@ -3,12 +3,14 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"os"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/slack-go/slack"
 
+	"github.com/kn-lim/slackingway-bot/internal/dice"
 	"github.com/kn-lim/slackingway-bot/internal/slackingway"
 	"github.com/kn-lim/slackingway-bot/internal/utils"
 )
@@ -60,6 +62,19 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
 				return err
 			}
+		case "/roll":
+			if err := s.WriteToHistory(); err != nil {
+				log.Printf("Error writing to history: %v", err)
+				return err
+			}
+
+			resultString, resultInt, err := dice.Roll(s.SlackRequestBody.Text)
+			if err != nil {
+				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
+				return err
+			}
+
+			message.Text = fmt.Sprintf("%s: %s = **%d**", s.SlackRequestBody.Text, resultString, resultInt)
 		default:
 			log.Printf("Unknown command: %v", request.Command)
 			return errors.New("unknown command")
