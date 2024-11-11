@@ -33,6 +33,7 @@ A personal Slack bot to handle miscellaneous tasks hosted on AWS Lambda.
 | `/echo` | Opens a Slack modal to echo a text to the output channel |
 | `/menu` | Opens a Slack modal to select options and sends the result to the output channel |
 | `/ping` | Ping |
+| `/roll` | Rolls a dice with modifiers |
 
 ## How to Build
 
