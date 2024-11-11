@@ -100,17 +100,9 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		}, nil
 	// Events
 	case "event_callback":
-
-		slackRequestString, err := utils.PrintStructFields(slackRequestBody)
-		if err != nil {
-			log.Printf("Error parsing form data: %v", err)
-			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
-		}
-		log.Printf("Slack Request Body: %v", slackRequestString)
-
 		switch s.SlackRequestBody.Event.Type {
 		case "app_home_opened":
-			if err := slackingway.HomeTab(s, s.SlackRequestBody.Event.User); err != nil {
+			if err := slackingway.HomeTab(s); err != nil {
 				log.Printf("Error with %s: %v", s.SlackRequestBody.Event.Type, err)
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}

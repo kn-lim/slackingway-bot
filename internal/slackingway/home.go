@@ -7,9 +7,9 @@ import (
 	"github.com/slack-go/slack"
 )
 
-func HomeTab(s *SlackingwayWrapper, userID string) error {
+func HomeTab(s *SlackingwayWrapper) error {
 	// Get user information
-	user, err := s.APIClient.GetUserInfo(s.SlackRequestBody.UserID)
+	user, err := s.APIClient.GetUserInfo(s.SlackRequestBody.Event.User)
 	if err != nil {
 		log.Printf("Error getting user info: %v", err)
 		return err
@@ -29,9 +29,9 @@ func HomeTab(s *SlackingwayWrapper, userID string) error {
 	}
 
 	// Publish the view to the user's Home tab
-	_, err = s.APIClient.PublishView(userID, homeTabView, "")
+	_, err = s.APIClient.PublishView(s.SlackRequestBody.Event.User, homeTabView, "")
 	if err != nil {
-		log.Printf("Error publishing Home tab view for %s: %v", userID, err)
+		log.Printf("Error publishing Home tab view for %s: %v", user.RealName, err)
 		return err
 	}
 

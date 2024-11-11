@@ -15,7 +15,7 @@ func TestHomeTab(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	testUserID := "U12345678"
+	const testUserID = "U01A1BCDEFG"
 
 	t.Run("Error on GetUserInfo", func(t *testing.T) {
 		MockSlackAPIClient := NewMockSlackAPIClient(ctrl)
@@ -24,10 +24,12 @@ func TestHomeTab(t *testing.T) {
 		s := &slackingway.SlackingwayWrapper{
 			APIClient: MockSlackAPIClient,
 			SlackRequestBody: &slackingway.SlackRequestBody{
-				UserID: testUserID,
+				Event: slackingway.SlackEvent{
+					User: testUserID,
+				},
 			},
 		}
-		err := slackingway.HomeTab(s, testUserID)
+		err := slackingway.HomeTab(s)
 
 		assert.NotNil(t, err)
 	})
@@ -40,10 +42,12 @@ func TestHomeTab(t *testing.T) {
 		s := &slackingway.SlackingwayWrapper{
 			APIClient: MockSlackAPIClient,
 			SlackRequestBody: &slackingway.SlackRequestBody{
-				UserID: testUserID,
+				Event: slackingway.SlackEvent{
+					User: testUserID,
+				},
 			},
 		}
-		err := slackingway.HomeTab(s, testUserID)
+		err := slackingway.HomeTab(s)
 
 		assert.NotNil(t, err)
 	})
@@ -56,10 +60,12 @@ func TestHomeTab(t *testing.T) {
 		s := &slackingway.SlackingwayWrapper{
 			APIClient: MockSlackAPIClient,
 			SlackRequestBody: &slackingway.SlackRequestBody{
-				UserID: testUserID,
+				Event: slackingway.SlackEvent{
+					User: testUserID,
+				},
 			},
 		}
-		err := slackingway.HomeTab(s, testUserID)
+		err := slackingway.HomeTab(s)
 
 		assert.Nil(t, err)
 	})
