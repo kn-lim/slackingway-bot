@@ -65,10 +65,10 @@ func TestReceivedMenu(t *testing.T) {
 				View:   testView,
 			},
 		}
-		msg, err := slackingway.ReceivedMenu(s)
+		blocks, err := slackingway.ReceivedMenu(s)
 
 		assert.NotNil(t, err)
-		assert.Empty(t, msg)
+		assert.Empty(t, blocks)
 	})
 
 	t.Run("Successful ReceivedMenu", func(t *testing.T) {
@@ -82,10 +82,10 @@ func TestReceivedMenu(t *testing.T) {
 				View:   testView,
 			},
 		}
-		msg, err := slackingway.ReceivedMenu(s)
+		blocks, err := slackingway.ReceivedMenu(s)
 
 		assert.Nil(t, err)
-		assert.NotEmpty(t, msg)
+		assert.NotEmpty(t, blocks)
 	})
 }
 

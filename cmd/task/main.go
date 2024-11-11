@@ -32,6 +32,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 
 	// Handle the request
 	var message slack.Msg
+	var blocks []slack.Block
 	var err error
 	switch request.Type {
 	// Slash Command
@@ -65,7 +66,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 		}
 
 		// Send the response to Slack if there is a message
-		if message.Text != "" {
+		if message.Text != "" && blocks == nil {
 			// Create the response
 			response, err := s.NewResponse(message)
 			if err != nil {
@@ -99,7 +100,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 				return err
 			}
 
-			message, err = slackingway.ReceivedMenu(s)
+			blocks, err = slackingway.ReceivedMenu(s)
 			if err != nil {
 				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
 				return err
@@ -110,8 +111,13 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 		}
 
 		// Send the response to Slack if there is a message
-		if message.Text != "" {
+		if message.Text != "" && blocks == nil {
 			if err := s.SendTextMessage(message.Text, os.Getenv("SLACK_OUTPUT_CHANNEL_ID")); err != nil {
+				log.Printf("Error sending message: %v", err)
+				return err
+			}
+		} else {
+			if err := s.SendBlockMessage(blocks, os.Getenv("SLACK_OUTPUT_CHANNEL_ID")); err != nil {
 				log.Printf("Error sending message: %v", err)
 				return err
 			}

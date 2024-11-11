@@ -20,7 +20,7 @@ func Menu(s *SlackingwayWrapper) error {
 	return nil
 }
 
-func ReceivedMenu(s *SlackingwayWrapper) (slack.Msg, error) {
+func ReceivedMenu(s *SlackingwayWrapper) ([]slack.Block, error) {
 	// Get State
 	state := s.SlackRequestBody.View.State.Values
 
@@ -42,11 +42,28 @@ func ReceivedMenu(s *SlackingwayWrapper) (slack.Msg, error) {
 	user, err := s.APIClient.GetUserInfo(s.SlackRequestBody.UserID)
 	if err != nil {
 		log.Printf("Error getting user info: %v", err)
-		return slack.Msg{}, err
+		return nil, err
 	}
 
-	return slack.Msg{
-		Text: fmt.Sprintf("Received Menu Selection from %s:\nOption 1: `%s`\nOption 2: `%s`\nOption 3: `%s`", user.RealName, option1, option2, option3),
+	// Create message blocks
+	titleText := slack.NewTextBlockObject("plain_text", fmt.Sprintf("Received Menu Selections from %s", user.RealName), false, false)
+	titleSection := slack.NewSectionBlock(titleText, nil, nil)
+
+	option1Text := slack.NewTextBlockObject("mrkdwn", fmt.Sprintf("*Option 1:* `%s`", option1), false, false)
+	option1Section := slack.NewSectionBlock(option1Text, nil, nil)
+
+	option2Text := slack.NewTextBlockObject("mrkdwn", fmt.Sprintf("*Option 2:* `%s`", option2), false, false)
+	option2Section := slack.NewSectionBlock(option2Text, nil, nil)
+
+	option3Text := slack.NewTextBlockObject("mrkdwn", fmt.Sprintf("*Option 3:* `%s`", option3), false, false)
+	option3Section := slack.NewSectionBlock(option3Text, nil, nil)
+
+	return []slack.Block{
+		titleSection,
+		slack.NewDividerBlock(),
+		option1Section,
+		option2Section,
+		option3Section,
 	}, nil
 }
 
