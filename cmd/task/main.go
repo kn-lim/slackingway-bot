@@ -66,7 +66,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 		}
 
 		// Send the response to Slack if there is a message
-		if message.Text != "" && blocks == nil {
+		if message.Text != "" && len(blocks) == 0 {
 			// Create the response
 			response, err := s.NewResponse(message)
 			if err != nil {
@@ -111,7 +111,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 		}
 
 		// Send the response to Slack if there is a message
-		if message.Text != "" && blocks == nil {
+		if message.Text != "" && len(blocks) == 0 {
 			if err := s.SendTextMessage(message.Text, os.Getenv("SLACK_OUTPUT_CHANNEL_ID")); err != nil {
 				log.Printf("Error sending message: %v", err)
 				return err
