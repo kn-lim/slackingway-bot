@@ -72,7 +72,7 @@ func CreateEchoModal() slack.ModalViewRequest {
 	}
 
 	return slack.ModalViewRequest{
-		Type:       slack.ViewType("modal"),
+		Type:       slack.VTModal,
 		Title:      titleText,
 		Close:      closeText,
 		Submit:     submitText,
