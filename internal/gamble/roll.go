@@ -1,4 +1,4 @@
-package dice
+package gamble
 
 import (
 	"errors"
