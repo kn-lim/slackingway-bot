@@ -1,7 +1,6 @@
 package slackingway
 
 import (
-	"log"
 	"time"
 
 	"github.com/slack-go/slack"
@@ -13,8 +12,6 @@ var (
 
 // DelayedPing sends a delayed ping response to the user
 func DelayedPing(s Slackingway) (slack.Msg, error) {
-	log.Printf("/delayed-ping received")
-
 	// Create Slack message
 	message := slack.Msg{
 		Text:            "...",
