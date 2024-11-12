@@ -28,7 +28,7 @@ var TestSlackRequestBody = &slackingway.SlackRequestBody{
 	TeamID:      "T12345",
 }
 
-var TestSlackOAuthToken = "xoxb-1234567890-1234567890123-12345678901234567890123456789012"
+var TestSlackOAuthToken = "123456789"
 
 // TestNewSlackingway tests the NewSlackingway function
 func TestNewSlackingway(t *testing.T) {
