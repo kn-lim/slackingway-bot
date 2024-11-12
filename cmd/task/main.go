@@ -74,7 +74,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 				return err
 			}
 
-			message.Text = fmt.Sprintf("%s: %s = **%d**", s.SlackRequestBody.Text, resultString, resultInt)
+			message.Text = fmt.Sprintf("%s: `%s = %d`", s.SlackRequestBody.Text, resultString, resultInt)
 		default:
 			log.Printf("Unknown command: %v", request.Command)
 			return errors.New("unknown command")
