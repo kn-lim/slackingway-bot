@@ -26,7 +26,7 @@ type Slackingway interface {
 	SendResponse(request *http.Request) error
 	SendTextMessage(message, channelID string) error
 	SendBlockMessage(blocks []slack.Block, channelID string) error
-	WriteToHistory() error
+	WriteToHistory(channelID string) error
 }
 
 type SlackingwayWrapper struct {
@@ -37,10 +37,10 @@ type SlackingwayWrapper struct {
 }
 
 // NewSlackingway creates a new SlackingwayWrapper
-func NewSlackingway(s *SlackRequestBody) *SlackingwayWrapper {
+func NewSlackingway(oauthToken string, s *SlackRequestBody) *SlackingwayWrapper {
 	return &SlackingwayWrapper{
 		Debug:            os.Getenv("DEBUG") == "true",
-		APIClient:        slack.New(os.Getenv("SLACK_OAUTH_TOKEN")),
+		APIClient:        slack.New(oauthToken),
 		HTTPClient:       &http.Client{},
 		SlackRequestBody: s,
 	}
@@ -93,7 +93,7 @@ func (s *SlackingwayWrapper) SendResponse(request *http.Request) error {
 }
 
 // WriteToHistory writes a message to Slackingway's history channel
-func (s *SlackingwayWrapper) WriteToHistory() error {
+func (s *SlackingwayWrapper) WriteToHistory(channelID string) error {
 	// Check if APIClient is nil
 	if s.APIClient == nil {
 		log.Printf("APIClient is nil")
@@ -113,7 +113,7 @@ func (s *SlackingwayWrapper) WriteToHistory() error {
 		full_command += " " + s.SlackRequestBody.Text
 	}
 	msg := fmt.Sprintf("%s executed command `%s` on %s", user.RealName, full_command, s.SlackRequestBody.Timestamp)
-	if err = s.SendTextMessage(msg, os.Getenv("SLACK_HISTORY_CHANNEL_ID")); err != nil {
+	if err = s.SendTextMessage(msg, channelID); err != nil {
 		log.Printf("Error writing to history: %v", err)
 		return err
 	}

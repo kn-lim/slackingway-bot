@@ -30,7 +30,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 	}
 
 	// Initialize Slackingway
-	s := slackingway.NewSlackingway(&request)
+	s := slackingway.NewSlackingway(os.Getenv("SLACK_OAUTH_TOKEN"), &request)
 
 	// Handle the request
 	var message slack.Msg
@@ -41,7 +41,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 	case "slash_command":
 		switch request.Command {
 		case "/delayed-ping":
-			if err := s.WriteToHistory(); err != nil {
+			if err := s.WriteToHistory(os.Getenv("SLACK_HISTORY_CHANNEL_ID")); err != nil {
 				log.Printf("Error writing to history: %v", err)
 				return err
 			}
@@ -52,7 +52,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 				return err
 			}
 		case "/ping":
-			if err := s.WriteToHistory(); err != nil {
+			if err := s.WriteToHistory(os.Getenv("SLACK_HISTORY_CHANNEL_ID")); err != nil {
 				log.Printf("Error writing to history: %v", err)
 				return err
 			}
@@ -63,7 +63,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 				return err
 			}
 		case "/roll":
-			if err := s.WriteToHistory(); err != nil {
+			if err := s.WriteToHistory(os.Getenv("SLACK_HISTORY_CHANNEL_ID")); err != nil {
 				log.Printf("Error writing to history: %v", err)
 				return err
 			}
@@ -99,7 +99,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 	case "view_submission":
 		switch s.SlackRequestBody.View.CallbackID {
 		case "/echo":
-			if err := s.WriteToHistory(); err != nil {
+			if err := s.WriteToHistory(os.Getenv("SLACK_HISTORY_CHANNEL_ID")); err != nil {
 				log.Printf("Error writing to history: %v", err)
 				return err
 			}
@@ -110,7 +110,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 				return err
 			}
 		case "/menu":
-			if err := s.WriteToHistory(); err != nil {
+			if err := s.WriteToHistory(os.Getenv("SLACK_HISTORY_CHANNEL_ID")); err != nil {
 				log.Printf("Error writing to history: %v", err)
 				return err
 			}

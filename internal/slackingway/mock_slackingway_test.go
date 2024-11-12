@@ -204,15 +204,15 @@ func (mr *MockSlackingwayMockRecorder) SendTextMessage(message, channelID any) *
 }
 
 // WriteToHistory mocks base method.
-func (m *MockSlackingway) WriteToHistory() error {
+func (m *MockSlackingway) WriteToHistory(channelID string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "WriteToHistory")
+	ret := m.ctrl.Call(m, "WriteToHistory", channelID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // WriteToHistory indicates an expected call of WriteToHistory.
-func (mr *MockSlackingwayMockRecorder) WriteToHistory() *gomock.Call {
+func (mr *MockSlackingwayMockRecorder) WriteToHistory(channelID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WriteToHistory", reflect.TypeOf((*MockSlackingway)(nil).WriteToHistory))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WriteToHistory", reflect.TypeOf((*MockSlackingway)(nil).WriteToHistory), channelID)
 }

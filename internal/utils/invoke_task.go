@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"log"
-	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -15,9 +14,9 @@ import (
 )
 
 // InvokeTaskFunction invokes the task function with the given Slack request
-func InvokeTaskFunction(ctx context.Context, request slackingway.SlackRequestBody) error {
+func InvokeTaskFunction(ctx context.Context, request slackingway.SlackRequestBody, region string, taskFunction string) error {
 	// Create a new AWS Lambda client
-	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(os.Getenv("AWS_REGION")))
+	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(region))
 	if err != nil {
 		log.Printf("Error loading AWS config: %v", err)
 		return err
@@ -33,7 +32,7 @@ func InvokeTaskFunction(ctx context.Context, request slackingway.SlackRequestBod
 
 	// Create the input for the task function
 	input := &lambda.InvokeInput{
-		FunctionName:   aws.String(os.Getenv("TASK_FUNCTION_NAME")),
+		FunctionName:   aws.String(taskFunction),
 		Payload:        payload,
 		InvocationType: types.InvocationTypeEvent,
 	}

@@ -28,7 +28,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	}
 
 	// Validate the request
-	if err := slackingway.ValidateRequest(request); err != nil {
+	if err := slackingway.ValidateRequest(request, os.Getenv("SLACK_SIGNING_SECRET")); err != nil {
 		return events.APIGatewayProxyResponse{StatusCode: http.StatusUnauthorized}, err
 	}
 
@@ -85,7 +85,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	}
 
 	// Initialize Slackingway
-	s := slackingway.NewSlackingway(&slackRequestBody)
+	s := slackingway.NewSlackingway(os.Getenv("SLACK_OAUTH_TOKEN"), &slackRequestBody)
 
 	// Handle the request
 	switch s.SlackRequestBody.Type {
@@ -120,7 +120,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
 		case "/menu":
-			if !slackingway.ValidateAdminRole(s.SlackRequestBody.UserID) {
+			if !slackingway.ValidateRole(os.Getenv("ADMIN_ROLE_USERS"), s.SlackRequestBody.UserID) {
 				return events.APIGatewayProxyResponse{
 					StatusCode: http.StatusOK,
 					Body:       fmt.Sprintf("You do not have permission to use `%s`", s.SlackRequestBody.Command),
@@ -134,7 +134,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		// All other commands
 		default:
 			// Invoke the task function with the SlackRequestBody as the payload
-			if err := utils.InvokeTaskFunction(ctx, *s.SlackRequestBody); err != nil {
+			if err := utils.InvokeTaskFunction(ctx, *s.SlackRequestBody, os.Getenv("AWS_REGION"), os.Getenv("TASK_FUNCTION_NAME")); err != nil {
 				log.Printf("Error invoking task function: %v", err)
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 			}
@@ -142,7 +142,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	// Modal submission
 	case "view_submission":
 		// Invoke the task function with the SlackRequestBody as the payload
-		if err := utils.InvokeTaskFunction(ctx, *s.SlackRequestBody); err != nil {
+		if err := utils.InvokeTaskFunction(ctx, *s.SlackRequestBody, os.Getenv("AWS_REGION"), os.Getenv("TASK_FUNCTION_NAME")); err != nil {
 			log.Printf("Error invoking task function: %v", err)
 			return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError}, err
 		}

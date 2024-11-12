@@ -17,8 +17,7 @@ import (
 )
 
 func TestValidateRequest(t *testing.T) {
-	// Set up environment variables
-	os.Setenv("SLACK_SIGNING_SECRET", "test-slack-signing-secret")
+	testSlackSigningSecret := "test-slack-signing-secret"
 
 	// Create a mock request
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
@@ -36,19 +35,20 @@ func TestValidateRequest(t *testing.T) {
 		Body: body,
 	}
 
-	assert.Nil(t, slackingway.ValidateRequest(request))
+	assert.Nil(t, slackingway.ValidateRequest(request, testSlackSigningSecret))
 }
 
 func TestValidateAdminRole(t *testing.T) {
 	t.Run("Empty admin role users", func(t *testing.T) {
-		os.Setenv("ADMIN_ROLE_USERS", "")
-		assert.False(t, slackingway.ValidateAdminRole("test-user1"))
+		testRole := ""
+
+		assert.False(t, slackingway.ValidateRole(testRole, "test-user1"))
 	})
 
 	t.Run("Valid admin role users", func(t *testing.T) {
-		os.Setenv("ADMIN_ROLE_USERS", "test-user1,test-user2")
-		assert.True(t, slackingway.ValidateAdminRole("test-user1"))
-		assert.True(t, slackingway.ValidateAdminRole("test-user2"))
-		assert.False(t, slackingway.ValidateAdminRole("test-user3"))
+		testRole := "test-user1,test-user2"
+		assert.True(t, slackingway.ValidateRole(testRole, "test-user1"))
+		assert.True(t, slackingway.ValidateRole(testRole, "test-user2"))
+		assert.False(t, slackingway.ValidateRole(testRole, "test-user3"))
 	})
 }

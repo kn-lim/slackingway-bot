@@ -28,15 +28,18 @@ var TestSlackRequestBody = &slackingway.SlackRequestBody{
 	TeamID:      "T12345",
 }
 
+var TestSlackOAuthToken = "xoxb-1234567890-1234567890123-12345678901234567890123456789012"
+
 // TestNewSlackingway tests the NewSlackingway function
 func TestNewSlackingway(t *testing.T) {
 	// Run tests
-	actual := slackingway.NewSlackingway(TestSlackRequestBody)
 
-	assert.NotNil(t, actual)
-	assert.Equal(t, TestSlackRequestBody, actual.SlackRequestBody)
-	assert.NotNil(t, actual.HTTPClient)
-	assert.NotNil(t, actual.APIClient)
+	s := slackingway.NewSlackingway(TestSlackOAuthToken, TestSlackRequestBody)
+
+	assert.NotNil(t, s)
+	assert.Equal(t, TestSlackRequestBody, s.SlackRequestBody)
+	assert.NotNil(t, s.HTTPClient)
+	assert.NotNil(t, s.APIClient)
 }
 
 // TestNewResponse tests the NewResponse function
@@ -44,7 +47,7 @@ func TestNewResponse(t *testing.T) {
 	message := slack.Msg{Text: "TestNewResponse"}
 
 	// Create a new SlackingwayWrapper instance
-	s := slackingway.NewSlackingway(&slackingway.SlackRequestBody{})
+	s := slackingway.NewSlackingway(TestSlackOAuthToken, &slackingway.SlackRequestBody{})
 
 	// Run tests
 	actual, err := s.NewResponse(message)
@@ -94,10 +97,12 @@ func TestWriteToHistory(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	testChannel := "C12345"
+
 	t.Run("APIClient is nil", func(t *testing.T) {
 		// Create an empty SlackingwayWrapper instance
 		s := &slackingway.SlackingwayWrapper{}
-		assert.NotNil(t, s.WriteToHistory())
+		assert.NotNil(t, s.WriteToHistory(testChannel))
 	})
 
 	t.Run("Success", func(t *testing.T) {
@@ -110,7 +115,7 @@ func TestWriteToHistory(t *testing.T) {
 			SlackRequestBody: TestSlackRequestBody,
 		}
 
-		assert.Nil(t, s.WriteToHistory())
+		assert.Nil(t, s.WriteToHistory(testChannel))
 	})
 }
 

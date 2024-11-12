@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -21,7 +20,7 @@ const (
 )
 
 // ValidateRequest verifies the request from Slack
-func ValidateRequest(request events.APIGatewayProxyRequest) error {
+func ValidateRequest(request events.APIGatewayProxyRequest, slackSigningSecret string) error {
 	// Check timing
 	timestampInt, err := strconv.ParseInt(request.Headers["X-Slack-Request-Timestamp"], 10, 64)
 	if err != nil {
@@ -35,7 +34,7 @@ func ValidateRequest(request events.APIGatewayProxyRequest) error {
 
 	// Check signature
 	basestring := fmt.Sprintf("%s:%s:%s", SlackVersion, request.Headers["X-Slack-Request-Timestamp"], request.Body)
-	h := hmac.New(sha256.New, []byte(os.Getenv("SLACK_SIGNING_SECRET")))
+	h := hmac.New(sha256.New, []byte(slackSigningSecret))
 	h.Write([]byte(basestring))
 	signature := SlackVersion + "=" + hex.EncodeToString(h.Sum(nil))
 	if request.Headers["X-Slack-Signature"] != signature {
@@ -46,14 +45,10 @@ func ValidateRequest(request events.APIGatewayProxyRequest) error {
 	return nil
 }
 
-// ValidateAdminRole checks if the user has the admin role
-func ValidateAdminRole(userID string) bool {
-	if os.Getenv("ADMIN_ROLE_USERS") == "" {
-		return false
-	}
-
+// ValidateRole checks if the user ID is in the role
+func ValidateRole(role, userID string) bool {
 	// Check if the user has the admin role
-	adminRoleUsers := strings.Split(os.Getenv("ADMIN_ROLE_USERS"), ",")
+	adminRoleUsers := strings.Split(role, ",")
 	for _, user := range adminRoleUsers {
 		if user == userID {
 			return true
