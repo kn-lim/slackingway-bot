@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"os"
 	"strconv"
 	"testing"
 	"time"
@@ -23,7 +22,7 @@ func TestValidateRequest(t *testing.T) {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 	body := "test-body"
 	basestring := fmt.Sprintf("%s:%s:%s", slackingway.SlackVersion, timestamp, body)
-	h := hmac.New(sha256.New, []byte(os.Getenv("SLACK_SIGNING_SECRET")))
+	h := hmac.New(sha256.New, []byte(testSlackSigningSecret))
 	h.Write([]byte(basestring))
 	signature := slackingway.SlackVersion + "=" + hex.EncodeToString(h.Sum(nil))
 
@@ -38,14 +37,14 @@ func TestValidateRequest(t *testing.T) {
 	assert.Nil(t, slackingway.ValidateRequest(request, testSlackSigningSecret))
 }
 
-func TestValidateAdminRole(t *testing.T) {
-	t.Run("Empty admin role users", func(t *testing.T) {
+func TestValidateRole(t *testing.T) {
+	t.Run("Empty role users", func(t *testing.T) {
 		testRole := ""
 
 		assert.False(t, slackingway.ValidateRole(testRole, "test-user1"))
 	})
 
-	t.Run("Valid admin role users", func(t *testing.T) {
+	t.Run("Valid role users", func(t *testing.T) {
 		testRole := "test-user1,test-user2"
 		assert.True(t, slackingway.ValidateRole(testRole, "test-user1"))
 		assert.True(t, slackingway.ValidateRole(testRole, "test-user2"))
