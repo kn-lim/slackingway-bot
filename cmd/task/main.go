@@ -10,7 +10,7 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/slack-go/slack"
 
-	"github.com/kn-lim/slackingway-bot/internal/dice"
+	"github.com/kn-lim/slackingway-bot/internal/gamble"
 	"github.com/kn-lim/slackingway-bot/internal/slackingway"
 	"github.com/kn-lim/slackingway-bot/internal/utils"
 )
@@ -40,6 +40,14 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 	// Slash Command
 	case "slash_command":
 		switch request.Command {
+		case "/coinflip":
+			if err := s.WriteToHistory(os.Getenv("SLACK_HISTORY_CHANNEL_ID")); err != nil {
+				log.Printf("Error writing to history: %v", err)
+				return err
+			}
+
+			result := gamble.CoinFlip()
+			message.Text = fmt.Sprintf("Flipped `%s`!", result)
 		case "/delayed-ping":
 			if err := s.WriteToHistory(os.Getenv("SLACK_HISTORY_CHANNEL_ID")); err != nil {
 				log.Printf("Error writing to history: %v", err)
@@ -68,7 +76,7 @@ func handler(ctx context.Context, request slackingway.SlackRequestBody) error {
 				return err
 			}
 
-			resultString, resultInt, err := dice.Roll(s.SlackRequestBody.Text)
+			resultString, resultInt, err := gamble.Roll(s.SlackRequestBody.Text)
 			if err != nil {
 				log.Printf("Error with %s: %v", s.SlackRequestBody.Command, err)
 				return err
