@@ -28,13 +28,13 @@ var TestSlackRequestBody = &slackingway.SlackRequestBody{
 	TeamID:      "T12345",
 }
 
-var TestSlackToken = "123456789"
+var TestToken = "123456789"
 
 // TestNewSlackingway tests the NewSlackingway function
 func TestNewSlackingway(t *testing.T) {
 	// Run tests
 
-	s := slackingway.NewSlackingway(TestSlackToken, TestSlackRequestBody)
+	s := slackingway.NewSlackingway(TestToken, TestSlackRequestBody)
 
 	assert.NotNil(t, s)
 	assert.Equal(t, TestSlackRequestBody, s.SlackRequestBody)
@@ -47,7 +47,7 @@ func TestNewResponse(t *testing.T) {
 	message := slack.Msg{Text: "TestNewResponse"}
 
 	// Create a new SlackingwayWrapper instance
-	s := slackingway.NewSlackingway(TestSlackToken, &slackingway.SlackRequestBody{})
+	s := slackingway.NewSlackingway(TestToken, &slackingway.SlackRequestBody{})
 
 	// Run tests
 	actual, err := s.NewResponse(message)
