@@ -85,6 +85,7 @@ To quickly spin up **slackingway-bot** on AWS, use the [Terraform module](https:
 5. Archive the `bootstrap` binaries in .zip files and upload it to the Lambda functions.
 6. In the `Configuration` tab, add in the required environment variables to the Lambda functions.
 7. Change the `Timeout` of the **task** Lambda function to a value greater than 3 seconds.
+    - The `Timeout` of the **endpoint** Lambda function can stay as 3 seconds to follow Slack's requirements.
 
 ## Slack Setup
 
