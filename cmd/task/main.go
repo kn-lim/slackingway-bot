@@ -8,9 +8,9 @@ import (
 	"os"
 
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/kn-lim/chattingway/gamble"
 	"github.com/slack-go/slack"
 
-	"github.com/kn-lim/slackingway-bot/internal/gamble"
 	"github.com/kn-lim/slackingway-bot/internal/slackingway"
 	"github.com/kn-lim/slackingway-bot/internal/utils"
 )
