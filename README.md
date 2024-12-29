@@ -71,7 +71,7 @@ Zip the `bootstrap` binaries and upload it to the Lambda functions.
 
 ## AWS Setup
 
-To quickly spin up **slackingway-bot** on AWS, use the [Terraform module](https://github.com/kn-lim/slackingway-bot/tree/main/terraform).
+To quickly spin up **slackingway-bot** on AWS, use the [Terraform module](https://github.com/kn-lim/chattingway-terraform/).
 
 1. Create the **endpoint** Lambda function on AWS. 
     - For the `Runtime`, select `Amazon Linux 2023`.
