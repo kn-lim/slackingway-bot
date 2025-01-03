@@ -7,7 +7,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.32.7
 	github.com/aws/aws-sdk-go-v2/config v1.28.7
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.69.2
-	github.com/kn-lim/chattingway v1.0.0
+	github.com/kn-lim/chattingway v1.3.0
 	github.com/slack-go/slack v0.15.0
 	github.com/stretchr/testify v1.10.0
 	go.uber.org/mock v0.5.0
